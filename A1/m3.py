@@ -124,7 +124,7 @@ for data_batch, labels_batch in train_gen:
 
 history = model.fit_generator(train_gen,
                               steps_per_epoch=100,
-                              epochs=30,
+                              epochs=10,
                               validation_data=vali_gen,
                               validation_steps=50)
 
