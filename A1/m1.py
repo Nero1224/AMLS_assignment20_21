@@ -3,24 +3,28 @@
 import cv2
 import pandas
 import numpy as np
-from keras.datasets import cifar10
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
+from keras.preprocessing import image
+import dlib_facefeature_extract as ex
+
 
 images = np.zeros(shape=(5000, 218, 178, 3))
 labels = np.zeros(shape=(5000, 1))
 test_size = 0.2
 
-data = pandas.read_csv("../Datasets/celeba/labels.csv", header=None)
-for n in range(5000):
-    image = cv2.imread("../Datasets/celeba/img/%s.jpg" %n, cv2.IMREAD_COLOR)
-    label = np.array(data.loc[n+1]).tolist()
-    label = int(str(label[0]).split('\t')[-2])
-    images[n] = image
-    if label == -1: label = 0
-    labels[n] = label
+features = []
+labels = []
 
+features, labels = ex.extract_features_labels()
+
+features = np.array(features)
+labels = np.array([labels, -(labels-1)]).T
+
+#print(features[:3].shape)
+#print(labels.shape)
+"""
 X_train, X_test, Y_train, Y_test = train_test_split(images, labels, test_size=test_size,
                                                     random_state=123,
                                                     stratify=labels)
@@ -79,7 +83,7 @@ Yte_predict = nn.predict(X_test) # 预测测试集的标签
 # 算一下分类的准确率，这里取的是平均值
 print('accuracy: %f' % ( np.mean(Yte_predict == Y_test) ))
 
-"""
+
 neigh = KNeighborsClassifier()
 neigh.fit(X_train, Y_train)
 Y_pred = neigh.predict(X_test)
