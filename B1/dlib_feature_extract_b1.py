@@ -92,13 +92,13 @@ def run_dlib_shape(image):
     return dlibout, resized_image
 
 
-def extract_features_labels():
+def extract_features_labels(n):
     """
     This funtion extracts the landmarks features for all images in the folder 'dataset/celeba'.
-    It also extracts the gender label for each image.
+    It also extracts the shape label for each image.
     :return:
         landmark_features:  an array containing 68 landmark points for each image in which a face was detected
-        gender_labels:      an array containing the gender label (male=0 and female=1) for each image in
+        shape_labels:      an array containing the shape label (male=0 and female=1) for each image in
                             which a face was detected
     """
     image_paths = [os.path.join(images_dir, l) for l in os.listdir(images_dir)]
@@ -106,22 +106,21 @@ def extract_features_labels():
     labels_file = open(os.path.join(basedir, labels_filename), 'r')
     lines = labels_file.readlines()
 
-    gender_labels = {line.split('\t')[0] : int(line.split('\t')[-2]) for line in lines[1:]}
+    shape_labels = {line.split('\t')[0] : int(line.split('\t')[-2]) for line in lines[1:]}
+
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = []
-        for img_path in image_paths:
+        for img_path in image_paths[:n]:
             file_name = img_path.split('.')[0].split('\\')[-1]
-
             # load image
             img = image.img_to_array(image.load_img(img_path,
                                                     target_size=target_size,
                                                     interpolation='bicubic'))
-            features, _ = run_dlib_shape(img[:140])
+            features, _ = run_dlib_shape(img)
             if features is not None:
                 all_features.append(features)
-                all_labels.append(gender_labels[file_name])
+                all_labels.append(shape_labels[file_name])
 
     landmark_features = np.array(all_features)
-    gender_labels = (np.array(all_labels) + 1)/2 # simply converts the -1 into 0, so male=0 and female=1
-    return landmark_features, gender_labels
+    return landmark_features, all_labels

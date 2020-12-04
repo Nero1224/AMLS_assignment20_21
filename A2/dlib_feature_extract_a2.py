@@ -117,7 +117,7 @@ def extract_features_labels():
             img = image.img_to_array(image.load_img(img_path,
                                                     target_size=target_size,
                                                     interpolation='bicubic'))
-            features, _ = run_dlib_shape(img[:140])
+            features, _ = run_dlib_shape(img)
             if features is not None:
                 all_features.append(features)
                 all_labels.append(gender_labels[file_name])
