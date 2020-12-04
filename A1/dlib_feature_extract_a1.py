@@ -92,7 +92,7 @@ def run_dlib_shape(image):
     return dlibout, resized_image
 
 
-def extract_features_labels():
+def extract_features_labels(n):
     """
     This funtion extracts the landmarks features for all images in the folder 'dataset/celeba'.
     It also extracts the gender label for each image.
@@ -110,14 +110,14 @@ def extract_features_labels():
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = []
-        for img_path in image_paths:
+        for img_path in image_paths[:n]:
             file_name = img_path.split('.')[0].split('\\')[-1]
 
             # load image
             img = image.img_to_array(image.load_img(img_path,
                                                     target_size=target_size,
                                                     interpolation='bicubic'))
-            features, _ = run_dlib_shape(img[:140])
+            features, _ = run_dlib_shape(img)
             if features is not None:
                 all_features.append(features)
                 all_labels.append(gender_labels[file_name])
