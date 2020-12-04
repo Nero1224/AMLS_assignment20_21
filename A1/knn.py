@@ -3,7 +3,7 @@
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
-import dlib_facefeature_extract as ex
+import dlib_feature_extract_a1 as ex
 
 """
 def gpu_manage():
@@ -58,8 +58,8 @@ def knn(features_tr, features_te, labels_tr, labels_te, k):
     print(score)
 
 
-ks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 features_tr, features_te, labels_tr, labels_te = get_tr_te_set(400, 100)
-for k in ks: knn(features_tr, features_te, labels_tr, labels_te, int(k))
+for k in range(100): knn(features_tr, features_te, labels_tr, labels_te, k+1)
+#knn(features_tr, features_te, labels_tr, labels_te, 100)
 
 

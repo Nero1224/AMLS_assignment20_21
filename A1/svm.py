@@ -2,8 +2,9 @@
 # import necessary API
 import numpy as np
 from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
-import dlib_facefeature_extract as ex
+import dlib_feature_extract_a1 as ex
 
 
 """
@@ -42,19 +43,33 @@ def get_tr_te_set(num_tr, num_te):
     return features_tr, features_te, labels_tr, labels_te
 
 
-def svm(features_tr, features_te, labels_tr, labels_te, kernel):
+def svm(features_tr, features_te, labels_tr, labels_te, kernel, c, gamma, degree):
     """
 
     :param kernel:
     :return:
     """
-    model = SVC(kernel='%s' %kernel)
-    model.fit(features_tr, labels_tr)
+    if kernel == "linear":
+        model = SVC(kernel='%s' %kernel, C=c)
+        model.fit(features_tr, labels_tr)
+    elif kernel == "linSVC":
+        model = LinearSVC(C=c)
+        model.fit(features_tr, labels_tr)
+    elif kernel == "rbf":
+        model = SVC(kernel='%s' % kernel, gamma=gamma, C=c)
+        model.fit(features_tr, labels_tr)
+    elif kernel == "poly":
+        model = SVC(kernel='%s' % kernel, degree=degree, C=c)
+        model.fit(features_tr, labels_tr)
+    else:
+        return "Wrong kernel input. Please check."
 
-    score = accuracy_score(labels_te, model.predict(features_te))
-    print(score)
+    print(accuracy_score(labels_te, model.predict(features_te)), 4)
 
 
 features_tr, features_te, labels_tr, labels_te = get_tr_te_set(400, 10)
-svm(features_tr, features_te, labels_tr, labels_te, 'linear')
+svm(features_tr, features_te, labels_tr, labels_te, 'linear', 1, None, None)
+svm(features_tr, features_te, labels_tr, labels_te, 'linSVC', 1, None, None)
+svm(features_tr, features_te, labels_tr, labels_te, 'rbf', 1, 0.7, None)
+svm(features_tr, features_te, labels_tr, labels_te, 'poly', 1, None, 3)
 
