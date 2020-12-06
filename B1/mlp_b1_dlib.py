@@ -36,17 +36,16 @@ def get_tr_te_set(num_tr, num_te, num_vali, n):
 
     return features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali
 
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(2500, 200, 200, 1500)
+features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(3000, 1000, 1000, 6000)
 
-#print(features_tr.shape)
+
+print(features_tr.shape)
 
 # build MLP
 inp = Input(shape=(68, 2))
 x = Flatten()(inp)
-
-x = Dense(2048, activation='sigmoid')(x)
-x = Dense(2048, activation='sigmoid')(x)
-
+x = Dense(2048, activation='relu')(x)
+x = Dense(2048, activation='relu')(x)
 x = Dense(5, activation='softmax')(x)
 
 model = Model(inputs=inp, output=x)
