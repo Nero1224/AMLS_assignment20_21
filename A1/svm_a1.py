@@ -65,7 +65,7 @@ def svm(features_tr, features_te, labels_tr, labels_te, kernel, c, gamma, degree
            accuracy_score(labels_te, model.predict(features_te))
 
 
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(600, 200, 200, 1500)
+features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(1200, 400, 400, 2500)
 
 
 acc_trs = []
@@ -90,7 +90,7 @@ ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
 
-"""
+
 acc_trs = []
 acc_tes = []
 for g in np.linspace(0.00001, 0.0024, 100):
@@ -106,7 +106,7 @@ fig, ax = plt.subplots(1, 1, figsize=(10,6))
 
 ax.plot(c, acc_trs, 'ro', label='Training acc')
 ax.plot(c, acc_tes, 'ro', color='b', label='Testing acc')
-ax.set_title('Accuracy with different g', fontsize=22)
+ax.set_title('Accuracy with different gamma', fontsize=22)
 ax.set_xlabel(r'g_value', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
@@ -130,10 +130,9 @@ fig, ax = plt.subplots(1, 1, figsize=(10,6))
 
 ax.plot(p, acc_trs, 'ro', label='Training acc')
 ax.plot(p, acc_tes, 'ro', color='b', label='Testing acc')
-ax.set_title('Accuracy with different p', fontsize=22)
+ax.set_title('Accuracy with different poly', fontsize=22)
 ax.set_xlabel(r'p_value', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
-"""

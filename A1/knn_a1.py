@@ -56,7 +56,7 @@ def knn(features_tr, features_te, labels_tr, labels_te, k):
 
 
 acc = []
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(600, 200, 200, 1500)
+features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(3000, 1000, 1, 5000)
 for k in range(200): acc.append(knn(features_tr, features_te, labels_tr, labels_te, k+1))
 #knn(features_tr, features_te, labels_tr, labels_te, 100)
 

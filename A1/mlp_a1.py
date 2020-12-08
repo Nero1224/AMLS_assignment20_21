@@ -47,7 +47,7 @@ Y_train = np_utils.to_categorical(Y_train)
 Y_test = np_utils.to_categorical(Y_test)
 
 print(Y_train)
-"""
+
 # build MLP
 inp = Input(shape=(218, 178, 3))
 x = Flatten()(inp)
@@ -86,7 +86,7 @@ fig, ax = plt.subplots(1,1, figsize=(10,6))
 
 ax.plot(epochs, acc, 'ro', label='Training acc')
 ax.plot(epochs, acc_val, 'b', label='Validation acc')
-ax.set_title('Accuracy with data augmentation', fontsize=22)
+ax.set_title('MLP performance for a1 (Accuracy)', fontsize=22)
 ax.set_xlabel(r'Epochs', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
@@ -96,10 +96,9 @@ figL, axL = plt.subplots(1,1, figsize=(10,6))
 
 axL.plot(epochs, loss, 'ro', label='Training loss')
 axL.plot(epochs, loss_val, 'b', label='Validation loss')
-axL.set_title('Loss with data augmentation', fontsize=22)
+axL.set_title('MLP performance for a1 (loss)', fontsize=22)
 axL.set_xlabel(r'Epochs', fontsize=22)
 axL.set_ylabel(r'Loss', fontsize=22)
 axL.tick_params(labelsize=22)
 axL.legend(fontsize=22)
 plt.show()
-"""

@@ -45,7 +45,7 @@ def rand_forest(features_tr, features_te, labels_tr, labels_te, features_n_estim
 
 
 acc = []
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(600, 200, 200, 1500)
+features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(3000, 1000, 40, 5000)
 for n in range(200): acc.append(rand_forest(features_tr, features_te, labels_tr, labels_te, n+1))
 
 acc = np.array(acc)

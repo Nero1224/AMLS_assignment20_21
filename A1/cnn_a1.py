@@ -9,6 +9,7 @@ from keras import optimizers
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import numpy as np
 
 # GPU memory management
 gpu = tf.config.experimental.list_physical_devices('GPU')
@@ -136,7 +137,7 @@ fig, ax = plt.subplots(1,1, figsize=(10,6))
 
 ax.plot(epochs, acc, 'ro', label='Training acc')
 ax.plot(epochs, val_acc, 'b', label='Validation acc')
-ax.set_title('Accuracy with data augmentation', fontsize=22)
+ax.set_title('CNN performance for a1 (Accuracy)', fontsize=22)
 ax.set_xlabel(r'Epochs', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
@@ -146,7 +147,7 @@ figL, axL = plt.subplots(1,1, figsize=(10,6))
 
 axL.plot(epochs, loss, 'ro', label='Training loss')
 axL.plot(epochs, val_loss, 'b', label='Validation loss')
-axL.set_title('Loss with data augmentation', fontsize=22)
+axL.set_title('CNN performance for a1 (Loss)', fontsize=22)
 axL.set_xlabel(r'Epochs', fontsize=22)
 axL.set_ylabel(r'Loss', fontsize=22)
 axL.tick_params(labelsize=22)
