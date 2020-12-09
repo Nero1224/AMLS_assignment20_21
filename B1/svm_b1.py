@@ -7,7 +7,17 @@ from sklearn.metrics import accuracy_score
 import dlib_feature_extract_b1 as ex
 import matplotlib.pyplot as plt
 from keras.utils import np_utils
+import os
+import shutil
 
+base_path = os.path.dirname(os.getcwd())
+img_path = os.path.join(base_path, r"Datasets\cartoon_set\img")
+jpg_path = os.path.join(base_path, r"Datasets\cartoon_set\img_jpg")
+if os.path.exists(jpg_path): pass
+else:
+    os.makedirs(jpg_path)
+    for img in os.listdir(img_path):
+        shutil.copyfile(os.path.join(img_path, r"%s" %img), os.path.join(jpg_path, "%s.jpg" %img.split(".")[0]))
 
 def get_tr_te_set(num_tr, num_te, num_vali,  n):
     """
@@ -29,9 +39,9 @@ def get_tr_te_set(num_tr, num_te, num_vali,  n):
     labels_te = labels[num_tr:(num_tr + num_te)]
     labels_vali = labels[(num_tr + num_te): (num_tr + num_te + num_vali)]
 
-    features_tr = features_tr.reshape(num_tr, 68 * 2)
-    features_te = features_te.reshape(num_te, 68 * 2)
-    features_vali = features_vali.reshape(num_vali, 68 * 2)
+    features_tr = features_tr.reshape(num_tr, 17 * 2)
+    features_te = features_te.reshape(num_te, 17 * 2)
+    features_vali = features_vali.reshape(num_vali, 17 * 2)
     labels_tr = list(zip(*labels_tr))[0]
     labels_te = list(zip(*labels_te))[0]
     labels_vali = list(zip(*labels_vali))[0]
@@ -66,9 +76,9 @@ def svm(features_tr, features_te, labels_tr, labels_te, kernel, c, gamma, degree
            accuracy_score(labels_te, model.predict(features_te))
 
 
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(600, 200, 200, 1500)
+features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(3000, 1000, 1000, 7500)
 
-
+"""
 acc_trs = []
 acc_tes = []
 for c in np.linspace(0.1, 1.0, 100):
@@ -114,10 +124,10 @@ ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
 
-
+"""
 acc_trs = []
 acc_tes = []
-for p in np.linspace(1, 30, 30):
+for p in np.linspace(1, 10, 10):
     acc_tr, acc_te = svm(features_tr, features_te, labels_tr, labels_te, 'poly', 1, None, p)
     acc_trs.append(acc_tr)
     acc_tes.append(acc_te)

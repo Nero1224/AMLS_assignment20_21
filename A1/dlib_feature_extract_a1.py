@@ -126,9 +126,10 @@ def extract_features_labels(n):
     gender_labels = (np.array(all_labels) + 1)/2 # simply converts the -1 into 0, so male=0 and female=1
     return landmark_features, gender_labels
 
+
 #img = cv2.imread("../Datasets/celeba/img/1.jpg")
-img = cv2.imread("../Datasets/cartoon_set/img_jpg/6.jpg")
-#img = cv2.imread("../../1.jpg")
+img = cv2.imread("../Datasets/cartoon_set/img_jpg/4.jpg")
+#img = cv2.imread("../../mask.jpg")
 #img = cv2.VideoCapture(0)
 #cv2.namedWindow("Camera")
 #success, frame = img.read()
@@ -150,10 +151,10 @@ for i, d in enumerate(dots):
         cv2.circle(img, point_pos, 1, (0,255,0), 2)
 
         font = cv2.FONT_HERSHEY_COMPLEX
-        cv2.putText(img, str(index+1), point_pos, font, 0.3, (255,0,0), 1, cv2.LINE_AA)
+        cv2.putText(img, str(index+1), point_pos, font, 0.2, (255,0,0), 1, cv2.LINE_AA)
 
 cv2.namedWindow("img", 0)
-cv2.resizeWindow("img", 500, 500)
+cv2.resizeWindow("img", 178, 218)
 cv2.imshow("img", img)
 k = cv2.waitKey()
 cv2.destroyAllWindows()

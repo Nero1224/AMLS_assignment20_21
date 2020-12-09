@@ -7,7 +7,7 @@ import dlib
 # PATH TO ALL IMAGES
 global basedir, image_paths, target_size
 basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\cartoon_set')
-images_dir = os.path.join(basedir, 'img')
+images_dir = os.path.join(basedir, 'img_jpg')
 labels_filename = 'labels.csv'
 
 detector = dlib.get_frontal_face_detector()
@@ -119,7 +119,7 @@ def extract_features_labels(n):
                                                     interpolation='bicubic'))
             features, _ = run_dlib_shape(img)
             if features is not None:
-                all_features.append(features)
+                all_features.append(features[:17])
                 all_labels.append(shape_labels[file_name])
 
     landmark_features = np.array(all_features)

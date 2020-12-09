@@ -26,9 +26,9 @@ def get_tr_te_set(num_tr, num_te, num_vali, n):
     labels_te = labels[num_tr:(num_tr + num_te)]
     labels_vali = labels[(num_tr + num_te): (num_tr + num_te + num_vali)]
 
-    features_tr = features_tr.reshape(num_tr, 68 * 2)
-    features_te = features_te.reshape(num_te, 68 * 2)
-    features_vali = features_vali.reshape(num_vali, 68 * 2)
+    features_tr = features_tr.reshape(num_tr, 17 * 2)
+    features_te = features_te.reshape(num_te, 17 * 2)
+    features_vali = features_vali.reshape(num_vali, 17 * 2)
     labels_tr = list(zip(*labels_tr))[0]
     labels_te = list(zip(*labels_te))[0]
     labels_vali = list(zip(*labels_vali))[0]
@@ -46,7 +46,7 @@ def rand_forest(features_tr, features_te, labels_tr, labels_te, features_n_estim
 
 
 acc = []
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(600, 200, 200, 1500)
+features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(3000, 1000, 1000, 7500)
 for n in range(200): acc.append(rand_forest(features_tr, features_te, labels_tr, labels_te, n+1))
 
 acc = np.array(acc)
@@ -61,4 +61,3 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
-
