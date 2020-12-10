@@ -18,7 +18,7 @@ def get_tr_te_set(num_tr, num_te, num_vali,  n):
     :param num_te: number of test set
     :return: train set and test set
     """
-    features, labels = ex.extract_features_labels(n)
+    features, labels = ex.extract_features_labels(n, 'on')
     features = np.array(features)
     labels = np_utils.to_categorical(labels, 5)
 
@@ -29,9 +29,9 @@ def get_tr_te_set(num_tr, num_te, num_vali,  n):
     labels_te = labels[num_tr:(num_tr + num_te)]
     labels_vali = labels[(num_tr + num_te): (num_tr + num_te + num_vali)]
 
-    features_tr = features_tr.reshape(num_tr, 68 * 2)
-    features_te = features_te.reshape(num_te, 68 * 2)
-    features_vali = features_vali.reshape(num_vali, 68 * 2)
+    features_tr = features_tr.reshape(num_tr, 30 * 160 * 3)
+    features_te = features_te.reshape(num_te, 30 * 160 * 3)
+    features_vali = features_vali.reshape(num_vali, 30 * 160 * 3)
     labels_tr = list(zip(*labels_tr))[0]
     labels_te = list(zip(*labels_te))[0]
     labels_vali = list(zip(*labels_vali))[0]
@@ -66,8 +66,8 @@ def svm(features_tr, features_te, labels_tr, labels_te, kernel, c, gamma, degree
            accuracy_score(labels_te, model.predict(features_te))
 
 
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(600, 200, 200, 1500)
-
+features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(3000, 1000, 1000, 5000)
+#get_tr_te_set(3000, 1000, 1000, 5000)
 
 acc_trs = []
 acc_tes = []

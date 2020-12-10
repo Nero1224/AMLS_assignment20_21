@@ -127,13 +127,9 @@ def extract_features_labels(n):
     return landmark_features, gender_labels
 
 
-#img = cv2.imread("../Datasets/celeba/img/1.jpg")
+"""
 img = cv2.imread("../Datasets/cartoon_set/img_jpg/4.jpg")
-#img = cv2.imread("../../mask.jpg")
-#img = cv2.VideoCapture(0)
-#cv2.namedWindow("Camera")
-#success, frame = img.read()
-#img = frame
+
 dots = detector(img, 1)
 for i, d in enumerate(dots):
     print("Detections: {}".format(d))
@@ -158,3 +154,4 @@ cv2.resizeWindow("img", 178, 218)
 cv2.imshow("img", img)
 k = cv2.waitKey()
 cv2.destroyAllWindows()
+"""

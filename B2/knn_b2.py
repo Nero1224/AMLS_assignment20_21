@@ -17,8 +17,8 @@ def get_tr_te_set(num_tr, num_te, num_vali, n):
     :param num_te: number of test set
     :return: train set and test set
     """
-    features, labels = ex.extract_features_labels(n)
-    features = np.array(features)
+    features, labels = ex.extract_features_labels(n, mask_sw='on')
+    #features = np.array(features)
     labels = np_utils.to_categorical(labels, 5)
 
     features_tr = features[:num_tr]
@@ -28,9 +28,9 @@ def get_tr_te_set(num_tr, num_te, num_vali, n):
     labels_te = labels[num_tr:(num_tr + num_te)]
     labels_vali = labels[(num_tr + num_te): (num_tr + num_te + num_vali)]
 
-    features_tr = features_tr.reshape(num_tr, 68 * 2)
-    features_te = features_te.reshape(num_te, 68 * 2)
-    features_vali = features_vali.reshape(num_vali, 68 * 2)
+    features_tr = features_tr.reshape(num_tr, 30 * 160 * 3)
+    features_te = features_te.reshape(num_te, 30 * 160 * 3)
+    features_vali = features_vali.reshape(num_vali, 30 * 160 * 3)
     labels_tr = list(zip(*labels_tr))[0]
     labels_te = list(zip(*labels_te))[0]
     labels_vali = list(zip(*labels_vali))[0]

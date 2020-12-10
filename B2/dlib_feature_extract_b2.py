@@ -92,7 +92,7 @@ def run_dlib_shape(image):
     return dlibout, resized_image
 
 
-def extract_features_labels(n):
+def extract_features_labels(n, mask_sw):
     """
     This funtion extracts the landmarks features for all images in the folder 'dataset/celeba'.
     It also extracts the shape label for each image.
@@ -114,13 +114,22 @@ def extract_features_labels(n):
         for img_path in image_paths[:n]:
             file_name = img_path.split('.')[0].split('\\')[-1]
             # load image
-            img = image.img_to_array(image.load_img(img_path,
-                                                    target_size=target_size,
-                                                    interpolation='bicubic'))
-            features, _ = run_dlib_shape(img)
-            if features is not None:
-                all_features.append(features)
+            if mask_sw == 'on':
+                img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+                #mask = np.zeros(np.array(img).shape[:2], np.uint8)
+                #mask[250:280, 170:330] = 1
+                #mask_img = cv2.bitwise_and(img, img, mask=mask)
+
+                all_features.append(img[250:280, 170:330])
                 all_labels.append(shape_labels[file_name])
+            else:
+                img = image.img_to_array(image.load_img(img_path,
+                                                        target_size=target_size,
+                                                        interpolation='bicubic'))
+                features, _ = run_dlib_shape(img)
+                if features is not None:
+                    all_features.append(features)
+                    all_labels.append(shape_labels[file_name])
 
     landmark_features = np.array(all_features)
     return landmark_features, all_labels
