@@ -1,7 +1,7 @@
 # Gender Classification based on MLP
 # import necessary API
 import numpy as np
-from keras.layers import Dense, Input, Flatten, Dropout
+from keras.layers import Dense, Input, Flatten
 from keras.models import Model
 from keras import optimizers
 import tensorflow as tf
@@ -13,7 +13,7 @@ gpu = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpu[0], True)
 
 
-def get_tr_te_set(num_tr, num_te, num_vali, n):
+def get_tr_te_set(num_tr, num_vali, num_te, n):
     """
     This function will automatically load the images
     inside dataset with given train and test set number
@@ -22,25 +22,26 @@ def get_tr_te_set(num_tr, num_te, num_vali, n):
     :param num_te: number of test set
     :return: train set and test set
     """
+    print("begin")
     features, labels = ex.extract_features_labels(n)
+    print("end")
     features = np.array(features)
     labels = np.array([labels, -(labels - 1)]).T
 
     features_tr = features[:num_tr]
-    features_te = features[num_tr:(num_tr + num_te)]
-    features_vali = features[(num_tr + num_te): (num_tr + num_te + num_vali)]
+    features_vali = features[num_tr:(num_tr + num_vali)]
+    features_te = features[(num_tr + num_vali): (num_tr + num_vali + num_te)]
     labels_tr = labels[:num_tr]
-    labels_te = labels[num_tr:(num_tr + num_te)]
-    labels_vali = labels[(num_tr + num_te): (num_tr + num_te + num_vali)]
+    labels_vali = labels[num_tr:(num_tr + num_vali)]
+    labels_te = labels[(num_tr + num_vali): (num_tr + num_vali + num_te)]
 
-    return features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali
+    return features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te
 
-features_tr, features_te, features_vali, labels_tr, labels_te, labels_vali = get_tr_te_set(2500, 200, 200, 1500)
 
-#print(features_tr.shape)
+features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set(3000, 500, 500, 5000)
 
-# build MLP
-inp = Input(shape=(68, 2))
+# build ML
+inp = Input(shape=(68,2))
 x = Flatten()(inp)
 
 x = Dense(2048, activation='sigmoid')(x)

@@ -6,6 +6,7 @@ from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
 import dlib_feature_extract_a1 as ex
 import matplotlib.pyplot as plt
+from keras.utils import np_utils
 
 
 def get_tr_te_set(num_tr, num_vali, num_te, n):
@@ -17,11 +18,11 @@ def get_tr_te_set(num_tr, num_vali, num_te, n):
     :param num_te: number of test set
     :return: train set and test set
     """
-    print("begin")
+    print("Extraction begin")
     features, labels = ex.extract_features_labels(n)
-    print("end")
+    print("Extraction end")
     features = np.array(features)
-    labels = np.array([labels, -(labels - 1)]).T
+    labels = np_utils.to_categorical(labels, 2)
 
     features_tr = features[:num_tr]
     features_vali = features[num_tr:(num_tr + num_vali)]
@@ -77,8 +78,9 @@ acc_valis = []
 print("SVM_LINEAR training begin")
 for c in np.linspace(0.1, 1.0, 100):
     print(c)
-    acc_trs.append(svm(features_tr, features_vali, labels_tr, labels_vali, 'linear', c, None, None)[0])
-    acc_valis.append(svm(features_tr, features_vali, labels_tr, labels_vali, 'linear', c, None, None)[1])
+    accs = svm(features_tr, features_vali, labels_tr, labels_vali, 'linear', c, None, None)
+    acc_trs.append(accs[0])
+    acc_valis.append(accs[1])
 print("SVM_LINEAR training end")
 
 acc_trs = np.array(acc_trs)
@@ -109,8 +111,9 @@ acc_valis = []
 print("SVM_RBF training begin")
 for g in np.linspace(0.00001, 0.0024, 100):
     print(g)
-    acc_trs.append(svm(features_tr, features_vali, labels_tr, labels_vali, 'rbf', 1, g, None)[0])
-    acc_valis.append(svm(features_tr, features_vali, labels_tr, labels_vali, 'rbf', 1, g, None)[1])
+    accs = svm(features_tr, features_vali, labels_tr, labels_vali, 'rbf', 1, g, None)
+    acc_trs.append(accs[0])
+    acc_valis.append(accs[1])
 print("SVM_RBF training begin")
 
 acc_trs = np.array(acc_trs)
@@ -127,7 +130,7 @@ print("Test accuracy:{}".format(acc_te))
 g = np.linspace(0.00001, 0.0024, 100)
 fig, ax = plt.subplots(1, 1, figsize=(10,6))
 ax.plot(c, acc_trs, 'ro', label='Training acc')
-ax.plot(c, acc_tes, 'ro', color='b', label='Testing acc')
+ax.plot(c, acc_tes, 'ro', color='b', label='Validation acc')
 ax.set_title('Accuracy with different gamma', fontsize=22)
 ax.set_xlabel(r'g_value', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
@@ -139,15 +142,16 @@ plt.show()
 acc_trs = []
 acc_valis = []
 print("SVM_POLY training begin")
-for p in np.linspace(1, 30, 30):
+for p in np.linspace(1, 10, 10):
     print(p)
-    acc_trs.append(svm(features_tr, features_vali, labels_tr, labels_vali, 'poly', 1, None, p)[0])
-    acc_valis.append(svm(features_tr, features_vali, labels_tr, labels_vali, 'poly', 1, None, p)[1])
+    accs = svm(features_tr, features_vali, labels_tr, labels_vali, 'poly', 1, None, p)
+    acc_trs.append(accs[0])
+    acc_valis.append(accs[1])
 print("SVM_POLY training begin")
 
 acc_trs = np.array(acc_trs)
 acc_valis = np.array(acc_valis)
-p = np.linspace(1, 30, 30)
+p = np.linspace(1, 10, 10)
 """
 model = SVC(kernel='poly', C=np.where(acc_valis==np.max(acc_valis)))
 model.fit(features_tr, labels_tr)
@@ -159,7 +163,7 @@ print("Test accuracy:{}".format(acc_te))
 """
 fig, ax = plt.subplots(1, 1, figsize=(10,6))
 ax.plot(p, acc_trs, 'ro', label='Training acc')
-ax.plot(p, acc_tes, 'ro', color='b', label='Testing acc')
+ax.plot(p, acc_valis, 'ro', color='b', label='Validation acc')
 ax.set_title('Accuracy with different poly', fontsize=22)
 ax.set_xlabel(r'p_value', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)

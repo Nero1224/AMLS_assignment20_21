@@ -153,14 +153,23 @@ model.compile(loss='categorical_crossentropy',
               metrics=['acc'])
 
 # input data processing
+train_data_gen = ImageDataGenerator(rescale=1./255,
+                                    rotation_range=40,
+                                    width_shift_range=0.2,
+                                    height_shift_range=0.2,
+                                    shear_range=0.2,
+                                    zoom_range=0.2,
+                                    horizontal_flip=True)
+"""
 train_data_gen = ImageDataGenerator(rescale=1./255)
-test_data_gen = ImageDataGenerator(rescale=1./255)
+"""
+vali_data_gen = ImageDataGenerator(rescale=1./255)
 
 train_gen = train_data_gen.flow_from_directory(img_path_train,
                                                target_size=(150, 150),
                                                batch_size=50,
                                                class_mode='categorical')
-vali_gen = train_data_gen.flow_from_directory(img_path_test,
+vali_gen = vali_data_gen.flow_from_directory(img_path_vali,
                                                target_size=(150, 150),
                                                batch_size=50,
                                                class_mode='categorical')

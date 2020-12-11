@@ -83,7 +83,7 @@ for male_label in male_labels[1875:2500]:
 
 # build CNN network
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(218, 178, 3)))
 model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPool2D(2, 2))
@@ -92,9 +92,9 @@ model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Conv2D(128, (3, 3), activation='relu'))
 model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Flatten())
+#model.add(layers.Dropout(0.5))
 model.add(layers.Dense(512, activation='relu'))
 model.add(layers.Dense(1, activation='sigmoid'))
-
 model.summary()
 
 model.compile(loss='binary_crossentropy',
@@ -102,15 +102,24 @@ model.compile(loss='binary_crossentropy',
               metrics=['acc'])
 
 # input data processing
+train_data_gen = ImageDataGenerator(rescale=1./255,
+                                    rotation_range=40,
+                                    width_shift_range=0.2,
+                                    height_shift_range=0.2,
+                                    shear_range=0.2,
+                                    zoom_range=0.2,
+                                    horizontal_flip=True)
+"""
 train_data_gen = ImageDataGenerator(rescale=1./255)
-test_data_gen = ImageDataGenerator(rescale=1./255)
+"""
+vali_data_gen = ImageDataGenerator(rescale=1./255)
 
 train_gen = train_data_gen.flow_from_directory(img_path_train,
-                                               target_size=(150, 150),
+                                               target_size=(218, 178),
                                                batch_size=25,
                                                class_mode='binary')
-vali_gen = train_data_gen.flow_from_directory(img_path_test,
-                                               target_size=(150, 150),
+vali_gen = vali_data_gen.flow_from_directory(img_path_vali,
+                                               target_size=(218, 178),
                                                batch_size=25,
                                                class_mode='binary')
 
@@ -121,11 +130,9 @@ for data_batch, labels_batch in train_gen:
 
 history = model.fit_generator(train_gen,
                               steps_per_epoch=100,
-                              epochs=10,
+                              epochs=150,
                               validation_data=vali_gen,
                               validation_steps=50)
-
-#model.save("a1_gender_v1.h5")
 
 acc = history.history['acc']
 val_acc = history.history['val_acc']
@@ -143,7 +150,7 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
-figL, axL = plt.subplots(1,1, figsize=(10,6))
+figL, axL = plt.subplots(1, 1, figsize=(10,6))
 
 axL.plot(epochs, loss, 'ro', label='Training loss')
 axL.plot(epochs, val_loss, 'b', label='Validation loss')
@@ -153,3 +160,28 @@ axL.set_ylabel(r'Loss', fontsize=22)
 axL.tick_params(labelsize=22)
 axL.legend(fontsize=22)
 plt.show()
+
+"""
+from keras.preprocessing import image
+train_data_gen = ImageDataGenerator(rescale=1./255,
+                                    rotation_range=40,
+                                    width_shift_range=0.2,
+                                    height_shift_range=0.2,
+                                    shear_range=0.2,
+                                    zoom_range=0.2,
+                                    horizontal_flip=True,
+                                    fill_mode='nearest')
+img = image.load_img(os.path.join(img_path, '0.jpg'))
+img = image.img_to_array(img)
+print(img.shape)
+img = img.reshape((1,) + img.shape)
+print(img.shape)
+i = 0
+for batch in train_data_gen.flow(img, batch_size=1):
+    plt.figure(i)
+    img_plot = plt.imshow(image.array_to_img(batch[0]))
+    i += 1
+    if i==8:
+        break
+plt.show()
+"""

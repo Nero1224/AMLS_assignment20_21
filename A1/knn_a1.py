@@ -5,6 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 import dlib_feature_extract_a1 as ex
 import matplotlib.pyplot as plt
+from keras.utils import np_utils
 
 
 def get_tr_te_set(num_tr, num_vali, num_te, n):
@@ -20,7 +21,7 @@ def get_tr_te_set(num_tr, num_vali, num_te, n):
     features, labels = ex.extract_features_labels(n)
     print("Extraction end")
     features = np.array(features)
-    labels = np.array([labels, -(labels - 1)]).T
+    labels = np_utils.to_categorical(labels, 2)
 
     features_tr = features[:num_tr]
     features_vali = features[num_tr:(num_tr + num_vali)]
@@ -66,8 +67,9 @@ features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get
 print("Training begin")
 for k in range(200):
     print(k)
-    acc_trs.append(knn(features_tr, features_vali, labels_tr, labels_vali, k+1)[0])
-    acc_valis.append(knn(features_tr, features_vali, labels_tr, labels_vali, k+1)[1])
+    accs = knn(features_tr, features_vali, labels_tr, labels_vali, k+1)
+    acc_trs.append(accs[0])
+    acc_valis.append(accs[1])
 
 model = KNeighborsClassifier(acc_valis.index(max(acc_valis))+1)
 model.fit(features_tr, labels_tr)
@@ -90,16 +92,3 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
-"""
-    k_value = range(1, len(labels) + 1)
-
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-
-    ax.plot(k_value, labels, 'ro', label='Labels')
-    ax.set_title('Classes Distribution', fontsize=22)
-    ax.set_xlabel(r'Index of labels', fontsize=22)
-    ax.set_ylabel(r'Classes of labels', fontsize=22)
-    ax.tick_params(labelsize=22)
-    ax.legend(fontsize=24)
-    plt.show()
-"""

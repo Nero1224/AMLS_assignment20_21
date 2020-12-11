@@ -127,31 +127,34 @@ def extract_features_labels(n):
     return landmark_features, gender_labels
 
 
-"""
-img = cv2.imread("../Datasets/cartoon_set/img_jpg/4.jpg")
+def marker(path):
+    """
+    :param path: the path of image
+    :return: none
+    """
+    img = cv2.imread(path)
 
-dots = detector(img, 1)
-for i, d in enumerate(dots):
-    print("Detections: {}".format(d))
-    print("Detection:{} Left:{} Right:{} Top:{} Bottom:{}".format(i,
-                                                                  d.left(),
-                                                                  d.right(),
-                                                                  d.top(),
-                                                                  d.bottom()))
-    shape = predictor(img, d)
-    print("Dot 0:{} Dot 1:{}...".format(shape.part(0), shape.part(1)))
+    dots = detector(img, 1)
+    for i, d in enumerate(dots):
+        print("Detections: {}".format(d))
+        print("Detection:{} Left:{} Right:{} Top:{} Bottom:{}".format(i,
+                                                                      d.left(),
+                                                                      d.right(),
+                                                                      d.top(),
+                                                                      d.bottom()))
+        shape = predictor(img, d)
+        print("Dot 0:{} Dot 1:{}...".format(shape.part(0), shape.part(1)))
 
-    for index, point in enumerate(shape.parts()):
-        print("Points{}: {}".format(index, point))
-        point_pos = (point.x, point.y)
-        cv2.circle(img, point_pos, 1, (0,255,0), 2)
+        for index, point in enumerate(shape.parts()):
+            print("Points{}: {}".format(index, point))
+            point_pos = (point.x, point.y)
+            cv2.circle(img, point_pos, 1, (0,255,0), 2)
 
-        font = cv2.FONT_HERSHEY_COMPLEX
-        cv2.putText(img, str(index+1), point_pos, font, 0.2, (255,0,0), 1, cv2.LINE_AA)
+            font = cv2.FONT_HERSHEY_COMPLEX
+            cv2.putText(img, str(index+1), point_pos, font, 0.2, (255,0,0), 1, cv2.LINE_AA)
 
-cv2.namedWindow("img", 0)
-cv2.resizeWindow("img", 178, 218)
-cv2.imshow("img", img)
-k = cv2.waitKey()
-cv2.destroyAllWindows()
-"""
+    cv2.namedWindow("img", 0)
+    cv2.resizeWindow("img", 178, 218)
+    cv2.imshow("img", img)
+    k = cv2.waitKey()
+    cv2.destroyAllWindows()

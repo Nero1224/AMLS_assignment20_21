@@ -82,7 +82,7 @@ for none_label in none_labels[1875:2500]:
 
 # build CNN network
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(218, 178, 3)))
 model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPool2D(2, 2))
@@ -101,15 +101,24 @@ model.compile(loss='binary_crossentropy',
               metrics=['acc'])
 
 # input data processing
+train_data_gen = ImageDataGenerator(rescale=1./255,
+                                    rotation_range=40,
+                                    width_shift_range=0.2,
+                                    height_shift_range=0.2,
+                                    shear_range=0.2,
+                                    zoom_range=0.2,
+                                    horizontal_flip=True)
+"""
 train_data_gen = ImageDataGenerator(rescale=1./255)
-test_data_gen = ImageDataGenerator(rescale=1./255)
+"""
+vali_data_gen = ImageDataGenerator(rescale=1./255)
 
 train_gen = train_data_gen.flow_from_directory(img_path_train,
-                                               target_size=(150, 150),
+                                               target_size=(218, 178),
                                                batch_size=25,
                                                class_mode='binary')
-vali_gen = train_data_gen.flow_from_directory(img_path_test,
-                                               target_size=(150, 150),
+vali_gen = vali_data_gen.flow_from_directory(img_path_vali,
+                                               target_size=(218, 178),
                                                batch_size=25,
                                                class_mode='binary')
 
@@ -132,7 +141,7 @@ loss = history.history['loss']
 val_loss = history.history['val_loss']
 epochs = range(1, len(acc) + 1)
 
-fig, ax = plt.subplots(1,1, figsize=(10,6))
+fig, ax = plt.subplots(1, 1, figsize=(10,6))
 
 ax.plot(epochs, acc, 'ro', label='Training acc')
 ax.plot(epochs, val_acc, 'b', label='Validation acc')

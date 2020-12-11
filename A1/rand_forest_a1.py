@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import dlib_feature_extract_a1 as ex
+from keras.utils import np_utils
 
 
 def get_tr_te_set(num_tr, num_vali, num_te, n):
@@ -14,11 +15,11 @@ def get_tr_te_set(num_tr, num_vali, num_te, n):
     :param num_te: number of test set
     :return: train set and test set
     """
-    print("begin")
+    print("Extraction begin")
     features, labels = ex.extract_features_labels(n)
-    print("end")
+    print("Extraction end")
     features = np.array(features)
-    labels = np.array([labels, -(labels - 1)]).T
+    labels = np_utils.to_categorical(labels, 2)
 
     features_tr = features[:num_tr]
     features_vali = features[num_tr:(num_tr + num_vali)]
@@ -55,8 +56,9 @@ features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get
 print("Training begin")
 for n in range(100):
     print(n)
-    acc_trs.append(rand_forest(features_tr, features_vali, labels_tr, labels_vali, n+1)[0])
-    acc_valis.append(rand_forest(features_tr, features_vali, labels_tr, labels_vali, n+1)[1])
+    accs = rand_forest(features_tr, features_vali, labels_tr, labels_vali, n+1)
+    acc_trs.append(accs[0])
+    acc_valis.append(accs[1])
 
 model = RandomForestClassifier(acc_valis.index(max(acc_valis))+1)
 model.fit(features_tr, labels_tr)
