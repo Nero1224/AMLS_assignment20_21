@@ -3,10 +3,11 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import dlib_feature_extract_a1 as ex
+import dlib_feature_extract_a1_test as ex_te
 from keras.utils import np_utils
 
 
-def get_tr_te_set(num_tr, num_vali, num_te, n):
+def get_tr_te_set():
     """
     This function will automatically load the images
     inside dataset with given train and test set number
@@ -16,21 +17,23 @@ def get_tr_te_set(num_tr, num_vali, num_te, n):
     :return: train set and test set
     """
     print("Extraction begin")
-    features, labels = ex.extract_features_labels(n)
+    features, labels = ex.extract_features_labels(5000)
+    features_te, labels_te = ex_te.extract_features_labels(1000)
     print("Extraction end")
+
     features = np.array(features)
     labels = np_utils.to_categorical(labels, 2)
+    features_te = np.array(features_te)
+    labels_te = np_utils.to_categorical(labels_te, 2)
 
-    features_tr = features[:num_tr]
-    features_vali = features[num_tr:(num_tr + num_vali)]
-    features_te = features[(num_tr + num_vali): (num_tr + num_vali + num_te)]
-    labels_tr = labels[:num_tr]
-    labels_vali = labels[num_tr:(num_tr + num_vali)]
-    labels_te = labels[(num_tr + num_vali): (num_tr + num_vali + num_te)]
+    features_tr = features[:features_te.shape[0]*3]
+    features_vali = features[features_te.shape[0]*3:features_te.shape[0]*4]
+    labels_tr = labels[:features_te.shape[0]*3]
+    labels_vali = labels[features_te.shape[0]*3:features_te.shape[0]*4]
 
-    features_tr = features_tr.reshape(num_tr, 68 * 2)
-    features_vali = features_vali.reshape(num_vali, 68 * 2)
-    features_te = features_te.reshape(num_te, 68 * 2)
+    features_tr = features_tr.reshape(features_te.shape[0]*3, 68 * 2)
+    features_vali = features_vali.reshape(features_te.shape[0], 68 * 2)
+    features_te = features_te.reshape(features_te.shape[0], 68 * 2)
     labels_tr = list(zip(*labels_tr))[0]
     labels_vali = list(zip(*labels_vali))[0]
     labels_te = list(zip(*labels_te))[0]
@@ -45,14 +48,14 @@ def rand_forest(features_tr, features_vali, labels_tr, labels_vali, features_n_e
     score_tr = accuracy_score(labels_tr, model.predict(features_tr))
     score_vali = accuracy_score(labels_vali, model.predict(features_vali))
 
-    print("Training acc:{}; Validation acc:{}".format(score_tr, score_vali))
+    print("Training acc:{}; Validation acc:{}".format(round(score_tr,3), round(score_vali,3)))
 
     return score_tr, score_vali
 
 
 acc_trs = []
 acc_valis = []
-features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set(3000, 500, 500, 5000)
+features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set()
 print("Training begin")
 for n in range(100):
     print(n)

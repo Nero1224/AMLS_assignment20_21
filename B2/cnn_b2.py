@@ -54,6 +54,7 @@ for path in path_list:
     if os.path.exists(path): pass
     else: os.makedirs(path)
 
+color_labels = []
 color0_labels = []
 color1_labels = []
 color2_labels = []
@@ -64,6 +65,7 @@ data_info = pandas.read_csv("../Datasets/cartoon_set/labels.csv", header=None)
 for n in range(10000):
     label = np.array(data_info.loc[n + 1]).tolist()
     color_label = int(str(label[0]).split('\t')[-3])
+
     img_label = int(str(label[0]).split('\t')[0])
     if color_label == 0:
         color0_labels.append(img_label)
@@ -73,13 +75,15 @@ for n in range(10000):
         color2_labels.append(img_label)
     elif color_label == 3:
         color3_labels.append(img_label)
-    else:
+    elif color_label == 4:
         color4_labels.append(img_label)
+
 print(len(color0_labels))
 print(len(color1_labels))
 print(len(color2_labels))
 print(len(color3_labels))
 print(len(color4_labels))
+
 
 for color0_label in color0_labels[0:1000]:
     if os.path.exists(img_path_color0_train+"\%s.jpg" %color0_label): pass
@@ -143,6 +147,7 @@ model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Conv2D(128, (3, 3), activation='relu'))
 model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Flatten())
+#model.add(layers.Dropout(0.5))
 model.add(layers.Dense(512, activation='relu'))
 model.add(layers.Dense(5, activation='softmax'))
 
@@ -153,6 +158,7 @@ model.compile(loss='categorical_crossentropy',
               metrics=['acc'])
 
 # input data processing
+
 train_data_gen = ImageDataGenerator(rescale=1./255,
                                     rotation_range=40,
                                     width_shift_range=0.2,
@@ -181,7 +187,7 @@ for data_batch, labels_batch in train_gen:
 
 history = model.fit_generator(train_gen,
                               steps_per_epoch=100,
-                              epochs=5,
+                              epochs=100,
                               validation_data=vali_gen,
                               validation_steps=50)
 
@@ -213,4 +219,3 @@ axL.set_ylabel(r'Loss', fontsize=22)
 axL.tick_params(labelsize=22)
 axL.legend(fontsize=22)
 plt.show()
-

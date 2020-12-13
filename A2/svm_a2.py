@@ -5,11 +5,12 @@ from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
 import dlib_feature_extract_a2 as ex
+import dlib_feature_extract_a2_test as ex_te
 import matplotlib.pyplot as plt
 from keras.utils import np_utils
 
 
-def get_tr_te_set(num_tr, num_vali, num_te, n):
+def get_tr_te_set():
     """
     This function will automatically load the images
     inside dataset with given train and test set number
@@ -19,21 +20,23 @@ def get_tr_te_set(num_tr, num_vali, num_te, n):
     :return: train set and test set
     """
     print("Extraction begin")
-    features, labels = ex.extract_features_labels(n)
+    features, labels = ex.extract_features_labels(5000)
+    features_te, labels_te = ex_te.extract_features_labels(1000)
     print("Extraction end")
+
     features = np.array(features)
     labels = np_utils.to_categorical(labels, 2)
+    features_te = np.array(features_te)
+    labels_te = np_utils.to_categorical(labels_te, 2)
 
-    features_tr = features[:num_tr]
-    features_vali = features[num_tr:(num_tr + num_vali)]
-    features_te = features[(num_tr + num_vali): (num_tr + num_vali + num_te)]
-    labels_tr = labels[:num_tr]
-    labels_vali = labels[num_tr:(num_tr + num_vali)]
-    labels_te = labels[(num_tr + num_vali): (num_tr + num_vali + num_te)]
+    features_tr = features[:features_te.shape[0]*3]
+    features_vali = features[features_te.shape[0]*3:features_te.shape[0]*4]
+    labels_tr = labels[:features_te.shape[0]*3]
+    labels_vali = labels[features_te.shape[0]*3:features_te.shape[0]*4]
 
-    features_tr = features_tr.reshape(num_tr, 68 * 2)
-    features_vali = features_vali.reshape(num_vali, 68 * 2)
-    features_te = features_te.reshape(num_te, 68 * 2)
+    features_tr = features_tr.reshape(features_te.shape[0]*3, 68 * 2)
+    features_vali = features_vali.reshape(features_te.shape[0], 68 * 2)
+    features_te = features_te.reshape(features_te.shape[0], 68 * 2)
     labels_tr = list(zip(*labels_tr))[0]
     labels_vali = list(zip(*labels_vali))[0]
     labels_te = list(zip(*labels_te))[0]
@@ -65,13 +68,13 @@ def svm(features_tr, features_vali, labels_tr, labels_vali, kernel, c, gamma, de
     score_tr = accuracy_score(labels_tr, model.predict(features_tr))
     score_vali = accuracy_score(labels_vali, model.predict(features_vali))
 
-    print("Train acc:{}; Validation acc:{}".format(score_tr, score_vali))
+    print("Train acc:{}; Validation acc:{}".format(round(score_tr,3), round(score_vali,3)))
 
     return accuracy_score(labels_tr, model.predict(features_tr)),\
            accuracy_score(labels_vali, model.predict(features_vali))
 
 
-features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set(3000, 500, 500, 5000)
+features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set()
 
 acc_trs = []
 acc_valis = []
@@ -83,17 +86,17 @@ for c in np.linspace(0.1, 1.0, 100):
     acc_valis.append(accs[1])
 print("SVM_LINEAR training end")
 
-acc_trs = np.array(acc_trs)
-acc_valis = np.array(acc_valis)
-"""
-model = SVC(kernel='linear', C=np.where(acc_valis==np.max(acc_valis)))
+model = SVC(kernel='linear', C=acc_valis.index(max(acc_valis))+1)
 model.fit(features_tr, labels_tr)
 acc_te = accuracy_score(labels_te, model.predict(features_te))
 
 print("Best validation accuracy:{}".format(np.amax(acc_valis)))
-print("Optimal c value:{}".format(np.where(acc_valis==np.max(acc_valis))))
+print("Optimal c value:{}".format(acc_valis.index(max(acc_valis))+1))
 print("Test accuracy:{}".format(acc_te))
-"""
+
+acc_trs = np.array(acc_trs)
+acc_valis = np.array(acc_valis)
+
 c = np.linspace(0.1, 1.0, 100)
 fig, ax = plt.subplots(1, 1, figsize=(10,6))
 ax.plot(c, acc_trs, 'ro', label='Training acc')
@@ -116,21 +119,21 @@ for g in np.linspace(0.00001, 0.0024, 100):
     acc_valis.append(accs[1])
 print("SVM_RBF training begin")
 
-acc_trs = np.array(acc_trs)
-acc_tes = np.array(acc_valis)
-"""
-model = SVC(kernel='rbf', gamma=, C=1)
+model = SVC(kernel='rbf', gamma=acc_valis.index(max(acc_valis))+1, C=1)
 model.fit(features_tr, labels_tr)
 acc_te = accuracy_score(labels_te, model.predict(features_te))
 
 print("Best validation accuracy:{}".format(np.amax(acc_valis)))
-print("Optimal g value:{}".format(np.where(acc_valis==np.max(acc_valis))))
+print("Optimal g value:{}".format(acc_valis.index(max(acc_valis))+1))
 print("Test accuracy:{}".format(acc_te))
-"""
+
+acc_trs = np.array(acc_trs)
+acc_valis = np.array(acc_valis)
+
 g = np.linspace(0.00001, 0.0024, 100)
 fig, ax = plt.subplots(1, 1, figsize=(10,6))
 ax.plot(c, acc_trs, 'ro', label='Training acc')
-ax.plot(c, acc_tes, 'ro', color='b', label='Validation acc')
+ax.plot(c, acc_valis, 'ro', color='b', label='Validation acc')
 ax.set_title('Accuracy with different gamma', fontsize=22)
 ax.set_xlabel(r'g_value', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
@@ -149,18 +152,18 @@ for p in np.linspace(1, 10, 10):
     acc_valis.append(accs[1])
 print("SVM_POLY training begin")
 
-acc_trs = np.array(acc_trs)
-acc_valis = np.array(acc_valis)
-p = np.linspace(1, 10, 10)
-"""
-model = SVC(kernel='poly', C=np.where(acc_valis==np.max(acc_valis)))
+model = SVC(kernel='poly', C=acc_valis.index(max(acc_valis))+1)
 model.fit(features_tr, labels_tr)
 acc_te = accuracy_score(labels_te, model.predict(features_te))
 
 print("Best validation accuracy:{}".format(np.amax(acc_valis)))
-print("Optimal n value:{}".format(np.where(acc_valis==np.max(acc_valis))))
+print("Optimal n value:{}".format(acc_valis.index(max(acc_valis))+1))
 print("Test accuracy:{}".format(acc_te))
-"""
+
+acc_trs = np.array(acc_trs)
+acc_valis = np.array(acc_valis)
+
+p = np.linspace(1, 7, 7)
 fig, ax = plt.subplots(1, 1, figsize=(10,6))
 ax.plot(p, acc_trs, 'ro', label='Training acc')
 ax.plot(p, acc_valis, 'ro', color='b', label='Validation acc')
