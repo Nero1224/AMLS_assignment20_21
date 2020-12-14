@@ -7,6 +7,8 @@ import dlib_feature_extract_b1 as ex
 import dlib_feature_extract_b1_test as ex_te
 import matplotlib.pyplot as plt
 from keras.utils import np_utils
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_validate
 
 
 def get_tr_te_set():
@@ -66,8 +68,12 @@ def ada_boost(features_tr, features_vali, labels_tr, labels_vali, n):
 
 acc_trs = []
 acc_valis = []
+ada_parameters = {''}
 features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set()
 print("Training begin")
+
+
+"""
 for n in range(200):
     print(n)
     accs = ada_boost(features_tr, features_vali, labels_tr, labels_vali, n+1)
@@ -95,3 +101,4 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
+"""

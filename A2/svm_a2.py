@@ -8,6 +8,7 @@ import dlib_feature_extract_a2 as ex
 import dlib_feature_extract_a2_test as ex_te
 import matplotlib.pyplot as plt
 from keras.utils import np_utils
+from sklearn.model_selection import GridSearchCV
 
 
 def get_tr_te_set():
@@ -78,6 +79,8 @@ features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get
 
 acc_trs = []
 acc_valis = []
+svm_paras = {'kernel': ('linear,', 'rbf'), 'C':np.linspace(0.1, 1.0, 100)}
+"""
 print("SVM_LINEAR training begin")
 for c in np.linspace(0.1, 1.0, 100):
     print(c)
@@ -173,3 +176,4 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
+"""

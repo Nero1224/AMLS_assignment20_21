@@ -7,6 +7,7 @@ import dlib_feature_extract_a1 as ex
 import dlib_feature_extract_a1_test as ex_te
 import matplotlib.pyplot as plt
 from keras.utils import np_utils
+from sklearn.model_selection import KFold
 
 
 def get_tr_te_set():
@@ -68,7 +69,7 @@ acc_trs = []
 acc_valis = []
 features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set()
 print("Training begin")
-for k in range(200):
+for k in range(100):
     print(k)
     accs = knn(features_tr, features_vali, labels_tr, labels_vali, k+1)
     acc_trs.append(accs[0])
