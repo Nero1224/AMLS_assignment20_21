@@ -17,14 +17,12 @@ def get_tr_te_set():
     :return: train set and test set
     """
     print("Extraction begin")
-    features, labels = ex.extract_features_labels(5000)
-    features_te, labels_te = ex_te.extract_features_labels(1000)
+    features, labels = ex.extract_features_labels()
+    features_te, labels_te = ex_te.extract_features_labels()
     print("Extraction end")
 
     features = np.array(features)
-    labels = np_utils.to_categorical(labels, 2)
     features_te = np.array(features_te)
-    labels_te = np_utils.to_categorical(labels_te, 2)
 
     features_tr = features[:features_te.shape[0]*3]
     features_vali = features[features_te.shape[0]*3:features_te.shape[0]*4]
@@ -34,9 +32,6 @@ def get_tr_te_set():
     features_tr = features_tr.reshape(features_te.shape[0]*3, 68 * 2)
     features_vali = features_vali.reshape(features_te.shape[0], 68 * 2)
     features_te = features_te.reshape(features_te.shape[0], 68 * 2)
-    labels_tr = list(zip(*labels_tr))[0]
-    labels_vali = list(zip(*labels_vali))[0]
-    labels_te = list(zip(*labels_te))[0]
 
     return features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te
 
@@ -56,13 +51,13 @@ def rand_forest(features_tr, features_vali, labels_tr, labels_vali, features_n_e
 acc_trs = []
 acc_valis = []
 features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set()
-print("Training begin")
+print("Random_Forest Training begin")
 for n in range(100):
     print(n)
     accs = rand_forest(features_tr, features_vali, labels_tr, labels_vali, n+1)
     acc_trs.append(accs[0])
     acc_valis.append(accs[1])
-
+print("Random_Forest Test begin")
 model = RandomForestClassifier(acc_valis.index(max(acc_valis))+1)
 model.fit(features_tr, labels_tr)
 acc_te = accuracy_score(labels_te, model.predict(features_te))

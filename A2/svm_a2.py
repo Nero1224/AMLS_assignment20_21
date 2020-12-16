@@ -21,8 +21,8 @@ def get_tr_te_set():
     :return: train set and test set
     """
     print("Extraction begin")
-    features, labels = ex.extract_features_labels(5000)
-    features_te, labels_te = ex_te.extract_features_labels(1000)
+    features, labels = ex.extract_features_labels()
+    features_te, labels_te = ex_te.extract_features_labels()
     print("Extraction end")
 
     features = np.array(features)
@@ -38,9 +38,6 @@ def get_tr_te_set():
     features_tr = features_tr.reshape(features_te.shape[0]*3, 68 * 2)
     features_vali = features_vali.reshape(features_te.shape[0], 68 * 2)
     features_te = features_te.reshape(features_te.shape[0], 68 * 2)
-    labels_tr = list(zip(*labels_tr))[0]
-    labels_vali = list(zip(*labels_vali))[0]
-    labels_te = list(zip(*labels_te))[0]
 
     return features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te
 
@@ -79,8 +76,7 @@ features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get
 
 acc_trs = []
 acc_valis = []
-svm_paras = {'kernel': ('linear,', 'rbf'), 'C':np.linspace(0.1, 1.0, 100)}
-"""
+
 print("SVM_LINEAR training begin")
 for c in np.linspace(0.1, 1.0, 100):
     print(c)
@@ -111,7 +107,7 @@ ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
 
-
+"""
 acc_trs = []
 acc_valis = []
 print("SVM_RBF training begin")
@@ -135,8 +131,8 @@ acc_valis = np.array(acc_valis)
 
 g = np.linspace(0.00001, 0.0024, 100)
 fig, ax = plt.subplots(1, 1, figsize=(10,6))
-ax.plot(c, acc_trs, 'ro', label='Training acc')
-ax.plot(c, acc_valis, 'ro', color='b', label='Validation acc')
+ax.plot(g, acc_trs, 'ro', label='Training acc')
+ax.plot(g, acc_valis, 'ro', color='b', label='Validation acc')
 ax.set_title('Accuracy with different gamma', fontsize=22)
 ax.set_xlabel(r'g_value', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
@@ -148,7 +144,7 @@ plt.show()
 acc_trs = []
 acc_valis = []
 print("SVM_POLY training begin")
-for p in np.linspace(1, 10, 10):
+for p in np.linspace(1, 7, 7):
     print(p)
     accs = svm(features_tr, features_vali, labels_tr, labels_vali, 'poly', 1, None, p)
     acc_trs.append(accs[0])
@@ -170,8 +166,8 @@ p = np.linspace(1, 7, 7)
 fig, ax = plt.subplots(1, 1, figsize=(10,6))
 ax.plot(p, acc_trs, 'ro', label='Training acc')
 ax.plot(p, acc_valis, 'ro', color='b', label='Validation acc')
-ax.set_title('Accuracy with different poly', fontsize=22)
-ax.set_xlabel(r'p_value', fontsize=22)
+ax.set_title('Accuracy with different degree', fontsize=22)
+ax.set_xlabel(r'degree_value', fontsize=22)
 ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)

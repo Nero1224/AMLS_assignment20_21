@@ -21,8 +21,8 @@ def get_tr_te_set():
     :return: train set and test set
     """
     print("Extraction begin")
-    features, labels = ex.extract_features_labels(10000)
-    features_te, labels_te = ex_te.extract_features_labels(2500)
+    features, labels = ex.extract_features_labels()
+    features_te, labels_te = ex_te.extract_features_labels()
     print("Extraction end")
 
     features = np.array(features)
@@ -73,8 +73,7 @@ features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get
 print("Training begin")
 
 
-"""
-for n in range(200):
+for n in range(400):
     print(n)
     accs = ada_boost(features_tr, features_vali, labels_tr, labels_vali, n+1)
     acc_trs.append(accs[0])
@@ -101,4 +100,3 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
-"""

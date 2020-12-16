@@ -11,6 +11,7 @@ from keras import optimizers
 from keras.utils import np_utils
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import platform
 
 # GPU memory management
 gpu = tf.config.experimental.list_physical_devices('GPU')

@@ -92,7 +92,7 @@ def run_dlib_shape(image):
     return dlibout, resized_image
 
 
-def extract_features_labels(n):
+def extract_features_labels():
     """
     This funtion extracts the landmarks features for all images in the folder 'dataset/celeba'.
     It also extracts the shape label for each image.
@@ -111,7 +111,7 @@ def extract_features_labels(n):
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = []
-        for img_path in image_paths[:n]:
+        for img_path in image_paths:
             file_name = img_path.split('.')[0].split('\\')[-1]
             # load image
             img = image.img_to_array(image.load_img(img_path,

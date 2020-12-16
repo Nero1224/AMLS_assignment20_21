@@ -3,10 +3,18 @@ import numpy as np
 from keras.preprocessing import image
 import cv2
 import dlib
+import platform
 
 # PATH TO ALL IMAGES
 global basedir, image_paths, target_size
-basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\celeba_test')
+
+if platform.system().lower() == 'windows':
+    print("Windows")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\celeba_test')
+else:
+    print("Linux")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets/celeba_test')
+
 images_dir = os.path.join(basedir, 'img')
 labels_filename = 'labels.csv'
 
@@ -92,7 +100,7 @@ def run_dlib_shape(image):
     return dlibout, resized_image
 
 
-def extract_features_labels(n):
+def extract_features_labels():
     """
     This funtion extracts the landmarks features for all images in the folder 'dataset/celeba'.
     It also extracts the gender label for each image.
@@ -110,7 +118,7 @@ def extract_features_labels(n):
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = []
-        for img_path in image_paths[:n]:
+        for img_path in image_paths:
             file_name = img_path.split('.')[0].split('\\')[-1]
 
             # load image

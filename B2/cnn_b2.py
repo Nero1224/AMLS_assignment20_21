@@ -188,7 +188,7 @@ model.add(layers.Dense(5, activation='softmax'))
 model.summary()
 
 model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-4),
+              optimizer=optimizers.Adam(lr=1e-4),
               metrics=['acc'])
 
 # input data processing
@@ -202,6 +202,7 @@ train_data_gen = ImageDataGenerator(rescale=1./255,
                                     horizontal_flip=True)
 """
 train_data_gen = ImageDataGenerator(rescale=1./255)
+
 vali_data_gen = ImageDataGenerator(rescale=1./255)
 test_data_gen = ImageDataGenerator(rescale=1./255)
 
@@ -234,7 +235,7 @@ for data_batch, labels_batch in test_gen:
 
 history = model.fit_generator(train_gen,
                               steps_per_epoch=150,
-                              epochs=10,
+                              epochs=5,
                               validation_data=vali_gen,
                               validation_steps=50)
 
