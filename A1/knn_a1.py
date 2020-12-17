@@ -6,7 +6,6 @@ from sklearn.metrics import accuracy_score
 import dlib_feature_extract_a1 as ex
 import dlib_feature_extract_a1_test as ex_te
 import matplotlib.pyplot as plt
-from keras.utils import np_utils
 
 
 def get_tr_te_set():
@@ -17,9 +16,9 @@ def get_tr_te_set():
     features_tr:    an array containing flatten 68 landmarks features for training
     features_vali:  an array containing flatten 68 landmarks features for validation
     features_te:    an array containing flatten 68 landmarks features for test
-    labels_tr:      an
-    labels_vali:    an
-    labels_te:      an
+    labels_tr:      an list containing labels for training set
+    labels_vali:    an list containing labels for validation set
+    labels_te:      anlist containing labels for test set
     """
     print("Extraction begin")
     features, labels = ex.extract_features_labels()

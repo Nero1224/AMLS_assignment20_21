@@ -7,7 +7,6 @@ from sklearn.metrics import accuracy_score
 import dlib_feature_extract_a1 as ex
 import dlib_feature_extract_a1_test as ex_te
 import matplotlib.pyplot as plt
-from keras.utils import np_utils
 
 
 def get_tr_te_set():
@@ -21,9 +20,7 @@ def get_tr_te_set():
     print("Extraction end")
 
     features = np.array(features)
-    labels = np_utils.to_categorical(labels, 2)
     features_te = np.array(features_te)
-    labels_te = np_utils.to_categorical(labels_te, 2)
 
     features_tr = features[:features_te.shape[0]*3]
     features_vali = features[features_te.shape[0]*3:features_te.shape[0]*4]
@@ -33,9 +30,6 @@ def get_tr_te_set():
     features_tr = features_tr.reshape(features_te.shape[0]*3, 68 * 2)
     features_vali = features_vali.reshape(features_te.shape[0], 68 * 2)
     features_te = features_te.reshape(features_te.shape[0], 68 * 2)
-    labels_tr = list(zip(*labels_tr))[0]
-    labels_vali = list(zip(*labels_vali))[0]
-    labels_te = list(zip(*labels_te))[0]
 
     return features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te
 
@@ -115,7 +109,7 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
-"""
+
 acc_trs = []
 acc_valis = []
 best_g = 0.00001
@@ -123,6 +117,8 @@ print("SVM_RBF training begin")
 for g in np.linspace(0.00001, 0.0024, n_rbf):
     print(g)
     accs = svm(features_tr, features_vali, labels_tr, labels_vali, 'rbf', 1, g, None)
+    if len(acc_valis) != 0:
+        if accs[1] > max(acc_valis): best_g = g
     acc_trs.append(accs[0])
     acc_valis.append(accs[1])
 print("SVM_RBF training begin")
@@ -157,6 +153,8 @@ print("SVM_POLY training begin")
 for d in np.linspace(1, 7, n_poly):
     print(d)
     accs = svm(features_tr, features_vali, labels_tr, labels_vali, 'poly', 1, None, d)
+    if len(acc_valis) != 0:
+        if accs[1] > max(acc_valis): best_d = d
     acc_trs.append(accs[0])
     acc_valis.append(accs[1])
 print("SVM_POLY training begin")
@@ -164,7 +162,7 @@ print("SVM_POLY training begin")
 acc_trs = np.array(acc_trs)
 acc_valis = np.array(acc_valis)
 
-model = SVC(kernel='poly', degree=best_d, c=1)
+model = SVC(kernel='poly', degree=best_d, C=1)
 model.fit(features_tr, labels_tr)
 acc_te = accuracy_score(labels_te, model.predict(features_te))
 
@@ -182,4 +180,3 @@ ax.set_ylabel(r'Accuracy', fontsize=22)
 ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
-"""

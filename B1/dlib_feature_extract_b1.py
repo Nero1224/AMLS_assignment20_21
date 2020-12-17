@@ -3,11 +3,28 @@ import numpy as np
 from keras.preprocessing import image
 import cv2
 import dlib
+import platform
+import shutil
 
 # PATH TO ALL IMAGES
 global basedir, image_paths, target_size
-basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\cartoon_set')
-images_dir = os.path.join(basedir, 'img_jpg')
+
+if platform.system().lower() == 'windows':
+    print("Windows")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\cartoon_set')
+else:
+    print("Linux")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets/cartoon_set')
+
+img_path = os.path.join(basedir, r"img")
+jpg_path = os.path.join(basedir, r"img_jpg")
+if os.path.exists(jpg_path): pass
+else:
+    os.makedirs(jpg_path)
+    for img in os.listdir(img_path):
+        shutil.copyfile(os.path.join(img_path, r"%s" %img), os.path.join(jpg_path, "%s.jpg" %img.split(".")[0]))
+
+images_dir = jpg_path
 labels_filename = 'labels.csv'
 
 detector = dlib.get_frontal_face_detector()

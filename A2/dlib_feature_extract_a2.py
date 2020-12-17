@@ -3,10 +3,18 @@ import numpy as np
 from keras.preprocessing import image
 import cv2
 import dlib
+import platform
 
 # PATH TO ALL IMAGES
 global basedir, image_paths, target_size
-basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\celeba')
+
+if platform.system().lower() == 'windows':
+    print("Windows")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\celeba')
+else:
+    print("Linux")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets/celeba')
+
 images_dir = os.path.join(basedir, 'img')
 labels_filename = 'labels.csv'
 

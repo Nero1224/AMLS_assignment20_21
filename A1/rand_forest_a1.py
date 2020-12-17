@@ -2,19 +2,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import learning_curve
 import dlib_feature_extract_a1 as ex
 import dlib_feature_extract_a1_test as ex_te
-from keras.utils import np_utils
 
 
 def get_tr_te_set():
     """
-    This function will automatically load the images
-    inside dataset with given train and test set number
-
-    :param num_tr: number of train set
-    :param num_te: number of test set
-    :return: train set and test set
+    This function will extract dlib feature and labels for all CelebA images.
+    It also provided prepared training, validation and test set with ratio 6:2:2
+    :return:
+    features_tr:    an array containing flatten 68 landmarks features for training
+    features_vali:  an array containing flatten 68 landmarks features for validation
+    features_te:    an array containing flatten 68 landmarks features for test
+    labels_tr:      an list containing labels for training set
+    labels_vali:    an list containing labels for validation set
+    labels_te:      anlist containing labels for test set
     """
     print("Extraction begin")
     features, labels = ex.extract_features_labels()
@@ -80,3 +83,19 @@ ax.tick_params(labelsize=22)
 ax.legend(fontsize=24)
 plt.show()
 
+acc_valis = list(acc_valis)
+train_sizes, train_loss, test_loss = learning_curve(RandomForestClassifier(acc_valis.index(max(acc_valis))+1),
+                                                   features_tr, labels_tr, cv=10, scoring=None,
+                                                   train_sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+train_loss_mean = np.mean(train_loss, 1)
+test_loss_mean = np.mean(test_loss, 1)
+
+plt.plot(train_sizes,train_loss_mean,'o-',color='r',label='Trainning')
+plt.plot(train_sizes,test_loss_mean,'o-',color='b',label='cross_validation')
+plt.xlabel('trainning examples')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+print(max(test_loss_mean))
+test_loss_mean = list(test_loss_mean)
+print(train_sizes[test_loss_mean.index(max(test_loss_mean))])

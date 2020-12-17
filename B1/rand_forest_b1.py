@@ -3,37 +3,41 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import dlib_feature_extract_b1 as ex
+import dlib_feature_extract_b1_test as ex_te
 from keras.utils import np_utils
 
 
-def get_tr_te_set(num_tr, num_vali, num_te, n):
+def get_tr_te_set():
     """
-    This function will automatically load the images
-    inside dataset with given train and test set number
-
-    :param num_tr: number of train set
-    :param num_te: number of test set
-    :return: train set and test set
+    This function will extract dlib feature and labels for all CelebA images.
+    It also provided prepared training, validation and test set with ratio 6:2:2
+    :return:
+    features_tr:    an array containing flatten 68 landmarks features for training
+    features_vali:  an array containing flatten 68 landmarks features for validation
+    features_te:    an array containing flatten 68 landmarks features for test
+    labels_tr:      an list containing labels for training set
+    labels_vali:    an list containing labels for validation set
+    labels_te:      anlist containing labels for test set
     """
     print("Extraction begin")
-    features, labels = ex.extract_features_labels(n)
+    features, labels = ex.extract_features_labels()
+    features_te, labels_te = ex_te.extract_features_labels()
     print("Extraction end")
+
     features = np.array(features)
-    labels = np_utils.to_categorical(labels, 2)
+    features_te = np.array(features_te)
 
-    features_tr = features[:num_tr]
-    features_vali = features[num_tr:(num_tr + num_vali)]
-    features_te = features[(num_tr + num_vali): (num_tr + num_vali + num_te)]
-    labels_tr = labels[:num_tr]
-    labels_vali = labels[num_tr:(num_tr + num_vali)]
-    labels_te = labels[(num_tr + num_vali): (num_tr + num_vali + num_te)]
+    print(features.shape)
+    print(features_te.shape)
 
-    features_tr = features_tr.reshape(num_tr, 68 * 2)
-    features_vali = features_vali.reshape(num_vali, 68 * 2)
-    features_te = features_te.reshape(num_te, 68 * 2)
-    labels_tr = list(zip(*labels_tr))[0]
-    labels_vali = list(zip(*labels_vali))[0]
-    labels_te = list(zip(*labels_te))[0]
+    features_tr = features[:features_te.shape[0]*3]
+    features_vali = features[features_te.shape[0]*3:features_te.shape[0]*4]
+    labels_tr = labels[:features_te.shape[0]*3]
+    labels_vali = labels[features_te.shape[0]*3:features_te.shape[0]*4]
+
+    features_tr = features_tr.reshape(features_te.shape[0]*3, 17 * 2)
+    features_vali = features_vali.reshape(features_te.shape[0], 17 * 2)
+    features_te = features_te.reshape(features_te.shape[0], 17 * 2)
 
     return features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te
 
@@ -52,14 +56,14 @@ def rand_forest(features_tr, features_vali, labels_tr, labels_vali, features_n_e
 
 acc_trs = []
 acc_valis = []
-features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set(3000, 500, 500, 5000)
-print("Training begin")
+features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te = get_tr_te_set()
+print("Random_Forest Training begin")
 for n in range(100):
     print(n)
     accs = rand_forest(features_tr, features_vali, labels_tr, labels_vali, n+1)
     acc_trs.append(accs[0])
     acc_valis.append(accs[1])
-
+print("Random_Forest Test begin")
 model = RandomForestClassifier(acc_valis.index(max(acc_valis))+1)
 model.fit(features_tr, labels_tr)
 acc_te = accuracy_score(labels_te, model.predict(features_te))

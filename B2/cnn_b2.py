@@ -66,7 +66,6 @@ color1_labels = []
 color2_labels = []
 color3_labels = []
 color4_labels = []
-
 color_labels_te = []
 color0_labels_te = []
 color1_labels_te = []
@@ -181,7 +180,6 @@ model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Conv2D(128, (3, 3), activation='relu'))
 model.add(layers.MaxPool2D(2, 2))
 model.add(layers.Flatten())
-#model.add(layers.Dropout(0.5))
 model.add(layers.Dense(512, activation='relu'))
 model.add(layers.Dense(5, activation='softmax'))
 
@@ -202,7 +200,6 @@ train_data_gen = ImageDataGenerator(rescale=1./255,
                                     horizontal_flip=True)
 """
 train_data_gen = ImageDataGenerator(rescale=1./255)
-
 vali_data_gen = ImageDataGenerator(rescale=1./255)
 test_data_gen = ImageDataGenerator(rescale=1./255)
 

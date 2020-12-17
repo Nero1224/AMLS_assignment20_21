@@ -1,17 +1,32 @@
 import os
 import numpy as np
-from keras.preprocessing import image
 import cv2
-import dlib
+import shutil
+import platform
 
 # PATH TO ALL IMAGES
 global basedir, image_paths, target_size
-basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\cartoon_set')
-images_dir = os.path.join(basedir, 'img')
+
+if platform.system().lower() == 'windows':
+    print("Windows")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\cartoon_set')
+else:
+    print("Linux")
+    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets/cartoon_set')
+
+img_path = os.path.join(basedir, r"img")
+jpg_path = os.path.join(basedir, r"img_jpg")
+if os.path.exists(jpg_path): pass
+else:
+    os.makedirs(jpg_path)
+    for img in os.listdir(img_path):
+        shutil.copyfile(os.path.join(img_path, r"%s" %img), os.path.join(jpg_path, "%s.jpg" %img.split(".")[0]))
+
+images_dir = jpg_path
 labels_filename = 'labels.csv'
 
 
-def extract_features_labels(n, mask_sw):
+def extract_features_labels(mask_sw):
     """
     This funtion extracts the landmarks features for all images in the folder 'dataset/celeba'.
     It also extracts the shape label for each image.
@@ -29,15 +44,11 @@ def extract_features_labels(n, mask_sw):
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = []
-        for img_path in image_paths[:n]:
+        for img_path in image_paths:
             file_name = img_path.split('.')[0].split('\\')[-1]
             # load image
             if mask_sw == 'on':
                 img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-                #mask = np.zeros(np.array(img).shape[:2], np.uint8)
-                #mask[250:280, 170:330] = 1
-                #mask_img = cv2.bitwise_and(img, img, mask=mask)
-
                 all_features.append(img[250:280, 170:330])
                 all_labels.append(shape_labels[file_name])
             else:
@@ -45,7 +56,6 @@ def extract_features_labels(n, mask_sw):
 
                 all_features.append(img)
                 all_labels.append(shape_labels[file_name])
-
 
     landmark_features = np.array(all_features)
     return landmark_features, all_labels
