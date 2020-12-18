@@ -4,9 +4,10 @@ import numpy as np
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import learning_curve
-import dlib_feature_extract_a2 as ex
-import dlib_feature_extract_a2_test as ex_te
+import dlib_feature_extract_a2 as ex_a2
+import dlib_feature_extract_a2_test as ex_te_a2
 import matplotlib.pyplot as plt
+import joblib
 
 
 def get_tr_te_set():
@@ -22,8 +23,8 @@ def get_tr_te_set():
     labels_te:      anlist containing labels for test set
     """
     print("Extraction begin")
-    features, labels = ex.extract_features_labels()
-    features_te, labels_te = ex_te.extract_features_labels()
+    features, labels = ex_a2.extract_features_labels()
+    features_te, labels_te = ex_te_a2.extract_features_labels()
     print("Extraction end")
 
     features = np.array(features)
@@ -36,19 +37,23 @@ def get_tr_te_set():
 
 
 features, features_te, labels, labels_te = get_tr_te_set()
-
+"""
 c = 1
 train_sizes, train_score, vali_score = learning_curve(SVC(kernel='linear', C=c),
-                                                   features, labels, cv=5, scoring=None,
-                                                   train_sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+                                                      features, labels, cv=5, scoring=None,
+                                                      random_state=3,
+                                                      train_sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
 train_score_mean = np.mean(train_score, 1)
 vali_score_mean = np.mean(vali_score, 1)
 
-plt.plot(train_sizes,train_score_mean,'o-',color='r',label='Trainning')
-plt.plot(train_sizes,vali_score_mean,'o-',color='b',label='cross_validation')
-plt.xlabel('Training examples')
-plt.ylabel('Scores')
-plt.legend()
+fig, ax = plt.subplots(1, 1, figsize=(10,6))
+ax.plot(train_sizes,train_score_mean,'o-',color='r',label='Trainning')
+ax.plot(train_sizes,vali_score_mean,'o-',color='b',label='cross_validation')
+ax.set_title('Learning curve for SVM(kernel= linear, C=1)', fontsize=22)
+ax.set_xlabel('Training examples', fontsize=22)
+ax.set_ylabel('Scores', fontsize=22)
+ax.tick_params(labelsize=22)
+ax.legend(fontsize=24)
 plt.show()
 
 vali_score_mean = list(vali_score_mean)
@@ -63,7 +68,7 @@ model.fit(features[:train_sizes[vali_score_mean.index(max(vali_score_mean))]],
 
 score_te = accuracy_score(labels_te, model.predict(features_te))
 print("Test accuracy:", score_te)
-
+"""
 c = 1
 g = 0.002
 train_sizes, train_score, vali_score = learning_curve(SVC(kernel='rbf', C=c, gamma=g),
@@ -72,26 +77,30 @@ train_sizes, train_score, vali_score = learning_curve(SVC(kernel='rbf', C=c, gam
 train_score_mean = np.mean(train_score, 1)
 vali_score_mean = np.mean(vali_score, 1)
 
-plt.plot(train_sizes,train_score_mean,'o-',color='r',label='Trainning')
-plt.plot(train_sizes,vali_score_mean,'o-',color='b',label='cross_validation')
-plt.xlabel('Training examples')
-plt.ylabel('Scores')
-plt.legend()
+fig, ax = plt.subplots(1, 1, figsize=(10,6))
+ax.plot(train_sizes,train_score_mean,'o-',color='r',label='Trainning')
+ax.plot(train_sizes,vali_score_mean,'o-',color='b',label='cross_validation')
+ax.set_title('Learning curve for SVM(kernel= rbf, C=1, gamma=0.002)', fontsize=22)
+ax.set_xlabel('Training examples', fontsize=22)
+ax.set_ylabel('Scores', fontsize=22)
+ax.tick_params(labelsize=22)
+ax.legend(fontsize=24)
 plt.show()
 
 vali_score_mean = list(vali_score_mean)
-print("Best training size:",train_sizes[vali_score_mean.index(max(vali_score_mean))])
+print("Best training size:", train_sizes[vali_score_mean.index(max(vali_score_mean))])
 print("Best cross-validation score: ", max(np.array(vali_score_mean)))
 print("Corresponding training score: ", train_score_mean[vali_score_mean.index(max(vali_score_mean))])
 
-
-model = SVC(kernel='rbf', C=c, gamma=g)
-model.fit(features[:train_sizes[vali_score_mean.index(max(vali_score_mean))]],
+model_a2 = SVC(kernel='rbf', C=c, gamma=g)
+model_a2.fit(features[:train_sizes[vali_score_mean.index(max(vali_score_mean))]],
           labels[:train_sizes[vali_score_mean.index(max(vali_score_mean))]])
 
-score_te = accuracy_score(labels_te, model.predict(features_te))
-print("Test accuracy:", score_te)
+joblib.dump(model_a2, 'model_a2.pkl')
 
+score_te = accuracy_score(labels_te, model_a2.predict(features_te))
+print("Test accuracy:", score_te)
+"""
 c = 1
 d = 5
 train_sizes, train_score, vali_score = learning_curve(SVC(kernel='poly', C=c, degree=d),
@@ -100,11 +109,14 @@ train_sizes, train_score, vali_score = learning_curve(SVC(kernel='poly', C=c, de
 train_score_mean = np.mean(train_score, 1)
 vali_score_mean = np.mean(vali_score, 1)
 
-plt.plot(train_sizes,train_score_mean,'o-',color='r',label='Trainning')
-plt.plot(train_sizes,vali_score_mean,'o-',color='b',label='cross_validation')
-plt.xlabel('Training examples')
-plt.ylabel('Scores')
-plt.legend()
+fig, ax = plt.subplots(1, 1, figsize=(10,6))
+ax.plot(train_sizes,train_score_mean,'o-',color='r',label='Trainning')
+ax.plot(train_sizes,vali_score_mean,'o-',color='b',label='cross_validation')
+ax.set_title('Learning curve for SVM(kernel= poly, C=1, degree=d)', fontsize=22)
+ax.set_xlabel('Training examples', fontsize=22)
+ax.set_ylabel('Scores', fontsize=22)
+ax.tick_params(labelsize=22)
+ax.legend(fontsize=24)
 plt.show()
 
 vali_score_mean = list(vali_score_mean)
@@ -119,3 +131,4 @@ model.fit(features[:train_sizes[vali_score_mean.index(max(vali_score_mean))]],
 
 score_te = accuracy_score(labels_te, model.predict(features_te))
 print("Test accuracy:", score_te)
+"""

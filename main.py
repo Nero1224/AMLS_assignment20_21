@@ -1,45 +1,53 @@
-import tensorflow as tf
+import model_a1 as a1
+#import model_a2 as a2
+#import model_b1 as b1
+#import model_b2 as b2
+import joblib
+from sklearn.metrics import accuracy_score
 
-'''
+
 # ======================================================================================================================
 # Data preprocessing
-data_train, data_val, data_test = data_preprocessing(args...)
+# Because cross-validation was used in task A1, A2, B1, no specific validation was given
+# Warning: the preprocessing for A1, A2, B1 is dlib extraction. It may takes long time.
+print("Task a1 preprocessing begin.")
+data_train_a1, data_test_a1, label_train_a1, label_test_a1 = a1.get_tr_te_set()
+print("Task a1 preprocessing end.")
+"""
+print("Task a2 preprocessing begin.")
+data_train_a2, data_test_a2, label_train_a2, label_test_a2 = a2.get_tr_te_set()
+print("Task a2 preprocessing end.")
+print("Task b1 preprocessing begin.")
+data_train_b1, data_test_b1, label_train_b1, label_test_b1 = b1.get_tr_te_set()
+print("Task b1 preprocessing end.")
+print("Task b2 preprocessing begin.")
+data_train_b2, data_test_b2, label_train_b2, label_test_b2 = b2.get_tr_te_set()
+print("Task b2 preprocessing end.")
+"""
 # ======================================================================================================================
-# Task A1
-model_A1 = A1(args...)                 # Build model object.
-acc_A1_train = model_A1.train(args...) # Train model based on the training set (you should fine-tune your model based on validation set.)
-acc_A1_test = model_A1.test(args...)   # Test model based on the test set.
-Clean up memory/GPU etc...             # Some code to free memory if necessary.
-
-
-# ======================================================================================================================
-# Task A2
-model_A2 = A2(args...)
-acc_A2_train = model_A2.train(args...)
-acc_A2_test = model_A2.test(args...)
-Clean up memory/GPU etc...
-
-
-# ======================================================================================================================
-# Task B1
-model_B1 = B1(args...)
-acc_B1_train = model_B1.train(args...)
-acc_B1_test = model_B1.test(args...)
-Clean up memory/GPU etc...
-
-
-# ======================================================================================================================
-# Task B2
-model_B2 = B2(args...)
-acc_B2_train = model_B2.train(args...)
-acc_B2_test = model_B2.test(args...)
-Clean up memory/GPU etc...
-
-
+# Task A1 A2 B1 B2
+# Reading the pre-trained models for each task
+# If want to re-train model, just find and run the model_~.py file under each task directory such as model_a1.py...
+model_A1 = joblib.load('./A1/model_a1.pkl')
+acc_A1_train = accuracy_score(label_train_a1, model_A1.predict(data_train_a1))
+acc_A1_test = accuracy_score(label_test_a1, model_A1.predict(data_test_a1))
+"""
+model_A2 = joblib.load('./A2/model_a2.pkl')
+acc_A2_train = accuracy_score(label_train_a2, model_A2.predict(data_train_a2))
+acc_A2_test = accuracy_score(label_test_a2, model_A2.predict(data_test_a2))
+model_B1 = joblib.load('./B1/model_b1.pkl')
+acc_B1_train = accuracy_score(label_train_b1, model_B1.predict(data_train_b1))
+acc_B1_test = accuracy_score(label_test_b1, model_B1.predict(data_test_b1))
+model_B2 = joblib.load('./B2/model_b2.pkl')
+acc_B2_train = accuracy_score(label_train_b2, model_B2.predict(data_train_b2))
+acc_B2_test = accuracy_score(label_test_b2, model_B2.predict(data_test_b2))
+"""
 # ======================================================================================================================
 ## Print out your results with following format:
+"""
 print('TA1:{},{};TA2:{},{};TB1:{},{};TB2:{},{};'.format(acc_A1_train, acc_A1_test,
                                                         acc_A2_train, acc_A2_test,
                                                         acc_B1_train, acc_B1_test,
                                                         acc_B2_train, acc_B2_test))
-'''
+"""
+print('TA1:{},{};'.format(acc_A1_train, acc_A1_test))

@@ -7,8 +7,6 @@ import dlib_feature_extract_b1 as ex
 import dlib_feature_extract_b1_test as ex_te
 import matplotlib.pyplot as plt
 from keras.utils import np_utils
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import cross_validate
 
 
 def get_tr_te_set():
@@ -26,9 +24,9 @@ def get_tr_te_set():
     print("Extraction end")
 
     features = np.array(features)
-    labels = np_utils.to_categorical(labels, 5)
+    #labels = np_utils.to_categorical(labels, 5)
     features_te = np.array(features_te)
-    labels_te = np_utils.to_categorical(labels_te, 5)
+    #labels_te = np_utils.to_categorical(labels_te, 5)
 
     features_tr = features[:features_te.shape[0]*3]
     features_vali = features[features_te.shape[0]*3:features_te.shape[0]*4]
@@ -38,9 +36,6 @@ def get_tr_te_set():
     features_tr = features_tr.reshape(features_te.shape[0]*3, 17 * 2)
     features_vali = features_vali.reshape(features_te.shape[0], 17 * 2)
     features_te = features_te.reshape(features_te.shape[0], 17 * 2)
-    labels_tr = list(zip(*labels_tr))[0]
-    labels_vali = list(zip(*labels_vali))[0]
-    labels_te = list(zip(*labels_te))[0]
 
     return features_tr, features_vali, features_te, labels_tr, labels_vali, labels_te
 
