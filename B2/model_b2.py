@@ -20,8 +20,16 @@ import joblib
 base_path = os.getcwd()
 
 def get_tr_vali_te_set():
+    """
+    This function will build image generator for training and validation (initial cartoon dataset (10000))
+    and test (added cartoon dataset (2500)) based on eye colors
+    :return:
+    train_gen:      generator for training
+    vali_gen:       generator for validation
+    test_gen:       generator for testing
+    """
+    # build directories for dataset
     path_list = []
-
     img_path = os.path.join(base_path, r"Datasets\cartoon_set\img")
     img_path_add = os.path.join(base_path, r"Datasets\cartoon_set_test\img")
     img_path_train = os.path.join(base_path, r"Datasets\cartoon_set\b2_dataset\train")
@@ -64,6 +72,7 @@ def get_tr_vali_te_set():
         else:
             os.makedirs(path)
 
+    # get labels and corresponding image index for different classe
     color0_labels = []
     color1_labels = []
     color2_labels = []
@@ -75,8 +84,10 @@ def get_tr_vali_te_set():
     color3_labels_te = []
     color4_labels_te = []
 
+    # read labels from training set and test set
     data_info = pandas.read_csv("./Datasets/cartoon_set/labels.csv", header=None)
     data_info_te = pandas.read_csv("./Datasets/cartoon_set_test/labels.csv", header=None)
+
 
     for n in range(10000):
         label = np.array(data_info.loc[n + 1]).tolist()
@@ -110,6 +121,7 @@ def get_tr_vali_te_set():
         elif color_label_te == 4:
             color4_labels_te.append(img_label_te)
 
+    # copy relevant images to assigned directory and change type from .png to .jpg
     for color0_label in color0_labels[0:1500]:
         if os.path.exists(img_path_color0_train + "\%s.jpg" % color0_label):
             pass
@@ -204,6 +216,7 @@ def get_tr_vali_te_set():
                                         zoom_range=0.2,
                                         horizontal_flip=True)
     """
+    # build image generators for training, validation and test, above is possible data augmentation
     train_data_gen = ImageDataGenerator(rescale=1. / 255)
     vali_data_gen = ImageDataGenerator(rescale=1. / 255)
     test_data_gen = ImageDataGenerator(rescale=1. / 255)
@@ -220,6 +233,8 @@ def get_tr_vali_te_set():
                                                  target_size=(150, 150),
                                                  batch_size=50,
                                                  class_mode='categorical')
+
+    # print class information and break loop
     for data_batch, labels_batch in train_gen:
         print("Data batch size:", data_batch.shape)
         print("Labels batch size:", labels_batch.shape)
@@ -237,6 +252,16 @@ def get_tr_vali_te_set():
 
 
 def cnn_training(train_gen, vali_gen, test_gen):
+    """
+    This function will train a new CNN model within five epochs. It will plot the learning curve,
+    print test accuracy and save the model.
+    :param train_gen:       generator for training
+    :param vali_gen:        generator for validation
+    :param test_gen:        generator for testing
+    :return:
+    acc[-1]:                training accuracy for last epoch
+    score[-1]:              testing accuracy for final model
+    """
     # build CNN network
     model_b2 = models.Sequential()
     model_b2.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
@@ -257,17 +282,21 @@ def cnn_training(train_gen, vali_gen, test_gen):
                      optimizer=optimizers.Adam(lr=1e-4),
                      metrics=['acc'])
 
+    # fit network
     history = model_b2.fit_generator(train_gen,
                                      steps_per_epoch=150,
                                      epochs=5,
                                      validation_data=vali_gen,
                                      validation_steps=50)
 
+    # save CNN model
     joblib.dump(model_b2, 'model_b2.pkl')
 
+    # do final test
     score = model_b2.evaluate_generator(test_gen)
     print(score)
 
+    # plot accuracy and loss within five epochs
     acc = history.history['acc']
     val_acc = history.history['val_acc']
     loss = history.history['loss']
@@ -295,6 +324,7 @@ def cnn_training(train_gen, vali_gen, test_gen):
     axL.legend(fontsize=22)
     plt.show()
 
+    # return training accuracy and test accuracy
     return acc[-1], score[-1]
 
 #train_gen, vali_gen, test_gen = get_tr_vali_te_set()

@@ -11,17 +11,20 @@ One of them was chosen  as the final solution.
 
 The overall structure is:
 
-**[1] Four models folder:** A1, A2, B1, B2 (contains final codes used for solving task(model_~.py), codes for other possible models (~_a1.py,~_a2.py...), 
+**[1] Four models folder:** A1, A2, B1, B2 (contains final codes used for solving task(model_~.py), codes for other 
+possible models (~_a1.py,~_a2.py...), 
 codes for feature extraction(dlib_feature_extract\_~.py,dlib_feature_extract\_~_test.py))
 
-**[2] One dataset folder:** Datasets (should be given initial set, added test set for cartoon image; initial set, added test set for CelebA image)
+**[2] Four pre-trained models** model_a1.pkl, model_a2.pkl, model_b1.pkl, model_b2.pkl
 
-**[3] One main code:** main.py (here all final model's performance can be shown; the result can be either based on pre-trained model or re-trained model)
+**[3] One dataset folder:** Datasets (should be given initial set, added test set for cartoon image; initial set, added test set for CelebA image)
 
-**[4] Three images:** overall.png, for_main.png, for_other.png (these images were added to explain overall project structure, the "basedir" for main.py,
+**[4] One main code:** main.py (here all final model's performance can be shown; the result can be either based on pre-trained model or re-trained model)
+
+**[5] Three images:** overall.png, for_main.png, for_other.png (these images were added to explain overall project structure, the "basedir" for main.py,
  the "basedir" for other codes)
 
-**[5] Others:** venv, .gitignore, .idea (PyCharm project file, git file, can be ignored) 
+**[6] Others:** venv, .gitignore, .idea (PyCharm project file, git file, can be ignored) 
 
 
 Note: 
@@ -43,9 +46,6 @@ https://liveuclac-my.sharepoint.com/:f:/g/personal/uceexl4_ucl_ac_uk/ErTmxrWYM-h
 #### model_a1.py
 This code contains the functions used in main.py. The detailed description, implementation and result
 can be found in report. The code in this file has the most strict and complete form and can be used for marking.
-
-#### model_a1.pkl
-This file contains pre-trained model and will be used in main.py to give training and test accuracy.
 
 #### knn_a1.py/rand_forest_a1.py/svm_a1.py/mlp_a1.py/cnn_a1.py
 (To run these codes, two things need to be done: 1.add dlib .dat file to the relevant directory;
