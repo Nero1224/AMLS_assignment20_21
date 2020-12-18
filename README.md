@@ -49,7 +49,7 @@ can be found in report. The code in this file has the most strict and complete f
 
 #### knn_a1.py/rand_forest_a1.py/svm_a1.py/mlp_a1.py/cnn_a1.py
 (To run these codes, two things need to be done: 1.add dlib .dat file to the relevant directory;
-2.change the parameter "basedir" in code of dlib_feature_extract_~.py and dlib_feature_extract_~_test.py from os.getcwd() to os.path.dirname(os.getcwd())) 
+2.change the parameter "basedir" in code of dlib_feature_extract_\~.py and dlib_feature_extract_\~_test.py from os.getcwd() to os.path.dirname(os.getcwd())) 
 
 These codes contain different model's training and testing pipline. The codes here are not as strict or complete as model
 _a1.py. They're for playing. Still, they can give complete model training procedure including feature extraction, training, 
