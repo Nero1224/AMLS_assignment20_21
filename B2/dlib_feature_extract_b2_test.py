@@ -9,10 +9,10 @@ global basedir, image_paths, target_size
 
 if platform.system().lower() == 'windows':
     print("Windows")
-    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\cartoon_set_test')
+    basedir = os.path.join(os.getcwd(), r'Datasets\cartoon_set_test')
 else:
     print("Linux")
-    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets/cartoon_set_test')
+    basedir = os.path.join(os.getcwd(), r'Datasets/cartoon_set_test')
 
 img_path = os.path.join(basedir, r"img")
 jpg_path = os.path.join(basedir, r"img_jpg")

@@ -10,10 +10,10 @@ global basedir, image_paths, target_size
 
 if platform.system().lower() == 'windows':
     print("Windows")
-    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets\celeba')
+    basedir = os.path.join(os.getcwd(), r'Datasets\celeba')
 else:
     print("Linux")
-    basedir = os.path.join(os.path.dirname(os.getcwd()), r'Datasets/celeba')
+    basedir = os.path.join(os.getcwd(), r'Datasets/celeba')
 
 images_dir = os.path.join(basedir, 'img')
 labels_filename = 'labels.csv'

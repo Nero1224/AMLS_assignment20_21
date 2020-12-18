@@ -13,11 +13,11 @@ import tensorflow as tf
 import joblib
 
 # GPU memory management
-gpu = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(gpu[0], True)
+#gpu = tf.config.experimental.list_physical_devices('GPU')
+#tf.config.experimental.set_memory_growth(gpu[0], True)
 
 # modify original dataset and prepare train, validation, test datasets
-base_path = os.path.dirname(os.getcwd())
+base_path = os.getcwd()
 
 def get_tr_vali_te_set():
     path_list = []
@@ -75,8 +75,8 @@ def get_tr_vali_te_set():
     color3_labels_te = []
     color4_labels_te = []
 
-    data_info = pandas.read_csv("../Datasets/cartoon_set/labels.csv", header=None)
-    data_info_te = pandas.read_csv("../Datasets/cartoon_set_test/labels.csv", header=None)
+    data_info = pandas.read_csv("./Datasets/cartoon_set/labels.csv", header=None)
+    data_info_te = pandas.read_csv("./Datasets/cartoon_set_test/labels.csv", header=None)
 
     for n in range(10000):
         label = np.array(data_info.loc[n + 1]).tolist()
@@ -220,78 +220,82 @@ def get_tr_vali_te_set():
                                                  target_size=(150, 150),
                                                  batch_size=50,
                                                  class_mode='categorical')
+    for data_batch, labels_batch in train_gen:
+        print("Data batch size:", data_batch.shape)
+        print("Labels batch size:", labels_batch.shape)
+        break
+    for data_batch, labels_batch in vali_gen:
+        print("Data batch size:", data_batch.shape)
+        print("Labels batch size:", labels_batch.shape)
+        break
+    for data_batch, labels_batch in test_gen:
+        print("Data batch size:", data_batch.shape)
+        print("Labels batch size:", labels_batch.shape)
+        break
+
     return train_gen, vali_gen, test_gen
 
-train_gen, vali_gen, test_gen = get_tr_vali_te_set()
 
-for data_batch, labels_batch in train_gen:
-    print("Data batch size:", data_batch.shape)
-    print("Labels batch size:", labels_batch.shape)
-    break
-for data_batch, labels_batch in vali_gen:
-    print("Data batch size:", data_batch.shape)
-    print("Labels batch size:", labels_batch.shape)
-    break
-for data_batch, labels_batch in test_gen:
-    print("Data batch size:", data_batch.shape)
-    print("Labels batch size:", labels_batch.shape)
-    break
+def cnn_training(train_gen, vali_gen, test_gen):
+    # build CNN network
+    model_b2 = models.Sequential()
+    model_b2.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+    model_b2.add(layers.MaxPool2D(2, 2))
+    model_b2.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model_b2.add(layers.MaxPool2D(2, 2))
+    model_b2.add(layers.Conv2D(128, (3, 3), activation='relu'))
+    model_b2.add(layers.MaxPool2D(2, 2))
+    model_b2.add(layers.Conv2D(128, (3, 3), activation='relu'))
+    model_b2.add(layers.MaxPool2D(2, 2))
+    model_b2.add(layers.Flatten())
+    model_b2.add(layers.Dense(512, activation='relu'))
+    model_b2.add(layers.Dense(5, activation='softmax'))
 
-# build CNN network
-model_b2 = models.Sequential()
-model_b2.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
-model_b2.add(layers.MaxPool2D(2, 2))
-model_b2.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model_b2.add(layers.MaxPool2D(2, 2))
-model_b2.add(layers.Conv2D(128, (3, 3), activation='relu'))
-model_b2.add(layers.MaxPool2D(2, 2))
-model_b2.add(layers.Conv2D(128, (3, 3), activation='relu'))
-model_b2.add(layers.MaxPool2D(2, 2))
-model_b2.add(layers.Flatten())
-model_b2.add(layers.Dense(512, activation='relu'))
-model_b2.add(layers.Dense(5, activation='softmax'))
+    model_b2.summary()
 
-model_b2.summary()
+    model_b2.compile(loss='categorical_crossentropy',
+                     optimizer=optimizers.Adam(lr=1e-4),
+                     metrics=['acc'])
 
-model_b2.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.Adam(lr=1e-4),
-              metrics=['acc'])
+    history = model_b2.fit_generator(train_gen,
+                                     steps_per_epoch=150,
+                                     epochs=5,
+                                     validation_data=vali_gen,
+                                     validation_steps=50)
 
+    joblib.dump(model_b2, 'model_b2.pkl')
 
-history = model_b2.fit_generator(train_gen,
-                              steps_per_epoch=150,
-                              epochs=5,
-                              validation_data=vali_gen,
-                              validation_steps=50)
+    score = model_b2.evaluate_generator(test_gen)
+    print(score)
 
-joblib.dump(model_b2, 'model_b2.pkl')
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    epochs = range(1, len(acc) + 1)
 
-score = model_b2.evaluate_generator(test_gen)
-print(score)
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
-acc = history.history['acc']
-val_acc = history.history['val_acc']
-loss = history.history['loss']
-val_loss = history.history['val_loss']
-epochs = range(1, len(acc) + 1)
+    ax.plot(epochs, acc, 'ro', label='Training acc')
+    ax.plot(epochs, val_acc, 'b', label='Validation acc')
+    ax.set_title('Accuracy with data augmentation', fontsize=22)
+    ax.set_xlabel(r'Epochs', fontsize=22)
+    ax.set_ylabel(r'Accuracy', fontsize=22)
+    ax.tick_params(labelsize=22)
+    ax.legend(fontsize=24)
+    plt.show()
+    figL, axL = plt.subplots(1, 1, figsize=(10, 6))
 
-fig, ax = plt.subplots(1,1, figsize=(10,6))
+    axL.plot(epochs, loss, 'ro', label='Training loss')
+    axL.plot(epochs, val_loss, 'b', label='Validation loss')
+    axL.set_title('Loss with data augmentation', fontsize=22)
+    axL.set_xlabel(r'Epochs', fontsize=22)
+    axL.set_ylabel(r'Loss', fontsize=22)
+    axL.tick_params(labelsize=22)
+    axL.legend(fontsize=22)
+    plt.show()
 
-ax.plot(epochs, acc, 'ro', label='Training acc')
-ax.plot(epochs, val_acc, 'b', label='Validation acc')
-ax.set_title('Accuracy with data augmentation', fontsize=22)
-ax.set_xlabel(r'Epochs', fontsize=22)
-ax.set_ylabel(r'Accuracy', fontsize=22)
-ax.tick_params(labelsize=22)
-ax.legend(fontsize=24)
-plt.show()
-figL, axL = plt.subplots(1,1, figsize=(10,6))
+    return acc[-1], score[-1]
 
-axL.plot(epochs, loss, 'ro', label='Training loss')
-axL.plot(epochs, val_loss, 'b', label='Validation loss')
-axL.set_title('Loss with data augmentation', fontsize=22)
-axL.set_xlabel(r'Epochs', fontsize=22)
-axL.set_ylabel(r'Loss', fontsize=22)
-axL.tick_params(labelsize=22)
-axL.legend(fontsize=22)
-plt.show()
+#train_gen, vali_gen, test_gen = get_tr_vali_te_set()
+#acc1, acc2 = cnn_training(train_gen, vali_gen, test_gen)

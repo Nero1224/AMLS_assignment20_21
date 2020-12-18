@@ -34,37 +34,38 @@ def get_tr_te_set():
     return features, features_te, labels, labels_te
 
 
-features, features_te, labels, labels_te = get_tr_te_set()
+def rf_training(features, features_te, labels, labels_te):
+    n = 66
+    train_sizes, train_score, vali_score = learning_curve(RandomForestClassifier(n),
+                                                          features, labels, cv=5, scoring=None,
+                                                          random_state=3,
+                                                          train_sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+                                                                       1.0])
+    train_score_mean = np.mean(train_score, 1)
+    vali_score_mean = np.mean(vali_score, 1)
 
-n = 66
-train_sizes, train_score, vali_score = learning_curve(RandomForestClassifier(n),
-                                                      features, labels, cv=5, scoring=None,
-                                                      random_state=3,
-                                                      train_sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
-train_score_mean = np.mean(train_score, 1)
-vali_score_mean = np.mean(vali_score, 1)
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+    ax.plot(train_sizes, train_score_mean, 'o-', color='r', label='Training')
+    ax.plot(train_sizes, vali_score_mean, 'o-', color='b', label='cross_validation')
+    ax.set_title('Learning curve for RF(n_estimators=66)', fontsize=22)
+    ax.set_xlabel('Training examples', fontsize=22)
+    ax.set_ylabel('Scores', fontsize=22)
+    ax.tick_params(labelsize=22)
+    ax.legend(fontsize=24, loc='best')
+    plt.show()
 
-fig, ax = plt.subplots(1, 1, figsize=(10,6))
-ax.plot(train_sizes,train_score_mean,'o-',color='r',label='Training')
-ax.plot(train_sizes,vali_score_mean,'o-',color='b',label='cross_validation')
-ax.set_title('Learning curve for RF(n_estimators=66)', fontsize=22)
-ax.set_xlabel('Training examples', fontsize=22)
-ax.set_ylabel('Scores', fontsize=22)
-ax.tick_params(labelsize=22)
-ax.legend(fontsize=24, loc='best')
-plt.show()
+    vali_score_mean = list(vali_score_mean)
+    print("Best training size:", train_sizes[vali_score_mean.index(max(vali_score_mean))])
+    print("Best cross-validation score: ", max(np.array(vali_score_mean)))
+    print("Corresponding training score: ", train_score_mean[vali_score_mean.index(max(vali_score_mean))])
 
-vali_score_mean = list(vali_score_mean)
-print("Best training size:",train_sizes[vali_score_mean.index(max(vali_score_mean))])
-print("Best cross-validation score: ", max(np.array(vali_score_mean)))
-print("Corresponding training score: ", train_score_mean[vali_score_mean.index(max(vali_score_mean))])
+    model_a1 = RandomForestClassifier(n)
+    model_a1.fit(features[:train_sizes[vali_score_mean.index(max(vali_score_mean))]],
+                 labels[:train_sizes[vali_score_mean.index(max(vali_score_mean))]])
 
+    joblib.dump(model_a1, 'model_a1.pkl')
 
-model_a1 = RandomForestClassifier(n)
-model_a1.fit(features[:train_sizes[vali_score_mean.index(max(vali_score_mean))]],
-          labels[:train_sizes[vali_score_mean.index(max(vali_score_mean))]])
+    score_te = accuracy_score(labels_te, model_a1.predict(features_te))
+    print("Test accuracy:", score_te)
 
-joblib.dump(model_a1, 'model_a1.pkl')
-
-score_te = accuracy_score(labels_te, model_a1.predict(features_te))
-print("Test accuracy:", score_te)
+    return train_score_mean[vali_score_mean.index(max(vali_score_mean))], score_te

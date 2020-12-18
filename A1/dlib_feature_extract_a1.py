@@ -14,7 +14,6 @@ if platform.system().lower() == 'windows':
 else:
     print("Linux")
     basedir = os.path.join(os.getcwd(), r'Datasets/celeba')
-print(os.getcwd())
 images_dir = os.path.join(basedir, 'img')
 labels_filename = 'labels.csv'
 
