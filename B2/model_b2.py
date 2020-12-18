@@ -13,8 +13,8 @@ import tensorflow as tf
 import joblib
 
 # GPU memory management
-#gpu = tf.config.experimental.list_physical_devices('GPU')
-#tf.config.experimental.set_memory_growth(gpu[0], True)
+gpu = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpu[0], True)
 
 # modify original dataset and prepare train, validation, test datasets
 base_path = os.getcwd()
