@@ -11,9 +11,9 @@ One of them was chosen  as the final solution.
 
 The overall structure is:
 
-**[1] Four models folder:** A1, A2, B1, B2 (contains final codes used for solving task(model_~.py), codes for other 
-possible models (~_a1.py,~_a2.py...), 
-codes for feature extraction(dlib_feature_extract\_~.py,dlib_feature_extract\_~_test.py))
+**[1] Four models folder:** A1, A2, B1, B2 (contains final codes used for solving task(model_\~.py), codes for other 
+possible models (\~_a1.py,\~_a2.py...), 
+codes for feature extraction(dlib_feature_extract\_\~.py,dlib_feature_extract\_\~_test.py))
 
 **[2] Four pre-trained models** model_a1.pkl, model_a2.pkl, model_b1.pkl, model_b2.pkl
 
