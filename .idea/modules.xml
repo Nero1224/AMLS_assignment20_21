@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AMLS_PROJECT.iml" filepath="$PROJECT_DIR$/.idea/AMLS_PROJECT.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Mres_UCL/UCL_Courses/Applied Machine Learning System II/Project/.idea/Project.iml" filepath="$PROJECT_DIR$/../../Mres_UCL/UCL_Courses/Applied Machine Learning System II/Project/.idea/Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Mres_UCL/Project_1/code/TSC/.idea/TSC.iml" filepath="$PROJECT_DIR$/../../Mres_UCL/Project_1/code/TSC/.idea/TSC.iml" />
     </modules>
   </component>
 </project>

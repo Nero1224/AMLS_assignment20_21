@@ -10,6 +10,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (lab) (5)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="TSC" />
+    <orderEntry type="module" module-name="Project" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="renderExternalDocumentation" value="true" />
