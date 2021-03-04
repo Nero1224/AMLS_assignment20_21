@@ -2,6 +2,7 @@ from keras import models, layers, optimizers
 import tensorflow as tf
 import numpy as np
 import  matplotlib.pyplot as plt
+from keras.callbacks.callbacks import EarlyStopping
 import pandas as pd
 
 # gpu memory management
@@ -61,9 +62,13 @@ def get_model(tr_x, tr_y, vali_x, vali_y, mem_num):
 
     model.compile(loss='mse', optimizer='adam')
 
+    early_stop = EarlyStopping(monitor="val_loss", min_delta=0, patience=2, mode="auto", baseline=0.1,
+                               restore_best_weights=True)
+
     history = model.fit(tr_x, tr_y, epochs=1500,
                         validation_data=(vali_x, vali_y),
-                        shuffle=False)
+                        shuffle=False,
+                        callbacks=[early_stop])
     tr_loss = history.history['loss'][500:]
     vali_loss = history.history['val_loss'][500:]
 
