@@ -7,6 +7,7 @@ from keras import layers
 from keras import models
 from keras import optimizers
 from keras.preprocessing.image import ImageDataGenerator
+from keras.callbacks.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
@@ -111,6 +112,8 @@ model.summary()
 model.compile(loss='binary_crossentropy',
               optimizer=optimizers.RMSprop(lr=1e-4),
               metrics=['acc'])
+
+model.add(layers.LSTM(5, dropout=0.2, kernel_regularizer=(0.01, 0)))
 
 # input data processing
 """
