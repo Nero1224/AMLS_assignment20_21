@@ -1,5 +1,6 @@
 import Project_Lib as pl
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 # GPU memory management
 gpu = tf.config.experimental.list_physical_devices('GPU')
@@ -17,7 +18,21 @@ print(label_train.shape)
 print(data_test.shape)
 print(label_test.shape)
 
-#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 10)
-#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 10)
-#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 10)
-pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 10)
+print('plot begin')
+time_steps= range(0, 128, 1)
+fig, ax = plt.subplots(1,1, figsize=(10,6))
+ax.plot(time_steps, data_train[1,:,1], label='body acc x')
+ax.set_title('Body acceleration for one time window)', fontsize=22)
+ax.set_xlabel(r'Time steps', fontsize=22)
+ax.set_ylabel(r'Acceleration', fontsize=22)
+ax.tick_params(labelsize=22)
+ax.legend(fontsize=24)
+plt.show()
+print('plot finished')
+
+
+
+#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 5)
+#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 5)
+#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 5)
+#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 5)

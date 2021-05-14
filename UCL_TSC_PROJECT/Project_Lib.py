@@ -30,7 +30,6 @@ def build_dataset(dir_path, file, type):
     # (m,n,1) and (1,m,1), then conduct stack operation
     data = np.dstack(data)
 
-
     label = load_file(dir_path + '/y_' + type + '.txt')
     print(type + ": data shape: {}; label shape: {}".format(data.shape, label.shape))
     return data, label
@@ -75,22 +74,22 @@ def cnn_1d(data_train, label_train, data_test, label_test):
     label_test = np_utils.to_categorical(label_test - 1)
     #print("Model building begin:")
     cnn_1d = models.Sequential()
-    cnn_1d.add(layers.Conv1D(filters=64, kernel_size=3, activation='relu',
+    cnn_1d.add(layers.Conv1D(filters=128, kernel_size=3, activation='relu',
                              input_shape=(data_train.shape[1], data_train.shape[2])))
     cnn_1d.add(layers.Conv1D(filters=64, kernel_size=3, activation='relu'))
     cnn_1d.add(layers.Dropout(0.5))
     cnn_1d.add(layers.MaxPooling1D(pool_size=2))
     cnn_1d.add(layers.Flatten())
-    cnn_1d.add(layers.Dense(100, activation='relu'))
+    cnn_1d.add(layers.Dense(75, activation='relu'))
     cnn_1d.add(layers.Dense(6, activation='softmax'))
     #cnn_1d.summary()
     cnn_1d.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
 
-    cnn_1d.fit(data_train, label_train, epochs=10, batch_size=32, verbose=0)
+    cnn_1d.fit(data_train, label_train, epochs=20, batch_size=16, verbose=0)
 
-    _, acc = cnn_1d.evaluate(data_test, label_test, batch_size=32, verbose=0)
+    _, acc = cnn_1d.evaluate(data_test, label_test, batch_size=16, verbose=0)
 
     return acc
 
