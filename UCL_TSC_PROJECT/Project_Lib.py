@@ -37,9 +37,9 @@ def build_dataset(dir_path, file, type):
 
 def distribution_ana(data):
     data = pandas.DataFrame(data)
-    print(data.groupby(0).size())
+    print("size: " + str(data.groupby(0).size()))
     quantity = data.groupby(0).size().values
-    print(quantity)
+    print("values: " + str(quantity))
 
     for n in range(len(quantity)):
         print("For type " + "{}: {:.2%}".format(n, quantity[n]/sum(quantity)))
@@ -80,18 +80,18 @@ def cnn_1d(data_train, label_train, data_test, label_test):
     cnn_1d.add(layers.Dropout(0.5))
     cnn_1d.add(layers.MaxPooling1D(pool_size=2))
     cnn_1d.add(layers.Flatten())
-    cnn_1d.add(layers.Dense(75, activation='relu'))
+    cnn_1d.add(layers.Dense(64, activation='relu'))
     cnn_1d.add(layers.Dense(6, activation='softmax'))
     #cnn_1d.summary()
     cnn_1d.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
 
-    cnn_1d.fit(data_train, label_train, epochs=20, batch_size=16, verbose=0)
+    history = cnn_1d.fit(data_train, label_train, epochs=20, batch_size=16, verbose=0, validation_split=0.2)
 
-    _, acc = cnn_1d.evaluate(data_test, label_test, batch_size=16, verbose=0)
+    _, te_acc = cnn_1d.evaluate(data_test, label_test, batch_size=16, verbose=0)
 
-    return acc
+    return history, history.history['acc'][4], history.history['val_acc'][4],te_acc, history.history['loss'][4], history.history['val_loss'][4]
 
 
 def lstm(data_train, label_train, data_test, label_test):
@@ -99,20 +99,21 @@ def lstm(data_train, label_train, data_test, label_test):
     label_test = np_utils.to_categorical(label_test - 1)
     #print("Model building begin:")
     lstm = models.Sequential()
-    lstm.add(layers.LSTM(100, input_shape=(data_train.shape[1], data_train.shape[2])))
-    lstm.add(layers.Dropout(0.5))
-    lstm.add(layers.Dense(100, activation='relu'))
+    lstm.add(layers.LSTM(128, input_shape=(data_train.shape[1], data_train.shape[2])))
+    #lstm.add(layers.Dropout(0.5))
+    lstm.add(layers.Dense(64, activation='relu'))
     lstm.add(layers.Dense(6, activation='softmax'))
     #lstm.summary()
     lstm.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
 
-    lstm.fit(data_train, label_train, epochs=15, batch_size=64, verbose=0)
+    history = lstm.fit(data_train, label_train, epochs=20, batch_size=16, verbose=0, validation_split=0.2)
 
-    _, acc = lstm.evaluate(data_test, label_test, batch_size=32, verbose=0)
+    _, te_acc = lstm.evaluate(data_test, label_test, batch_size=32, verbose=0)
 
-    return acc
+    return history, history.history['acc'][4], history.history['val_acc'][4], te_acc, history.history['loss'][4], history.history[
+        'val_loss'][4]
 
 
 def cnn_lstm(data_train, label_train, data_test, label_test, block_num):
@@ -130,20 +131,21 @@ def cnn_lstm(data_train, label_train, data_test, label_test, block_num):
     cnn_lstm.add(layers.TimeDistributed(layers.Dropout(0.5)))
     cnn_lstm.add(layers.TimeDistributed(layers.MaxPooling1D(pool_size=2)))
     cnn_lstm.add(layers.TimeDistributed(layers.Flatten()))
-    cnn_lstm.add(layers.LSTM(100, input_shape=()))
+    cnn_lstm.add(layers.LSTM(128, input_shape=()))
     cnn_lstm.add(layers.Dropout(0.5))
-    cnn_lstm.add(layers.Dense(100, activation='relu'))
+    cnn_lstm.add(layers.Dense(64, activation='relu'))
     cnn_lstm.add(layers.Dense(6, activation='softmax'))
     #cnn_1d.summary()
     cnn_lstm.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
 
-    cnn_lstm.fit(data_train, label_train, epochs=10, batch_size=32, verbose=0)
+    history = cnn_lstm.fit(data_train, label_train, epochs=10, batch_size=32, verbose=0, validation_split=0.2)
 
-    _, acc = cnn_lstm.evaluate(data_test, label_test, batch_size=32, verbose=0)
+    _, te_acc = cnn_lstm.evaluate(data_test, label_test, batch_size=32, verbose=0)
 
-    return acc
+    return history, history.history['acc'][4], history.history['val_acc'][4], te_acc, history.history['loss'][4], history.history[
+        'val_loss'][4]
 
 
 def conv_lstm(data_train, label_train, data_test, label_test, block_num):
@@ -154,56 +156,105 @@ def conv_lstm(data_train, label_train, data_test, label_test, block_num):
     label_test = np_utils.to_categorical(label_test - 1)
     #print("Model building begin:")
     conv_lstm = models.Sequential()
-    conv_lstm.add(layers.ConvLSTM2D(filters=64, kernel_size=(1,3),
+    conv_lstm.add(layers.ConvLSTM2D(filters=128, kernel_size=(1,3),
                                     activation='relu',
                                     input_shape=(block_num, 1, data_train.shape[3], data_train.shape[4])))
     conv_lstm.add(layers.Dropout(0.5))
     conv_lstm.add(layers.Flatten())
-    conv_lstm.add(layers.Dense(100, activation='relu'))
+    conv_lstm.add(layers.Dense(64, activation='relu'))
     conv_lstm.add(layers.Dense(6, activation='softmax'))
     #cnn_1d.summary()
     conv_lstm.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
 
-    conv_lstm.fit(data_train, label_train, epochs=25, batch_size=64, verbose=0)
+    history = conv_lstm.fit(data_train, label_train, epochs=25, batch_size=64, verbose=0, validation_split=0.2)
+    _, te_acc = conv_lstm.evaluate(data_test, label_test, batch_size=32, verbose=0)
 
-    _, acc = conv_lstm.evaluate(data_test, label_test, batch_size=32, verbose=0)
-
-    return acc
+    return history, history.history['acc'][4], history.history['val_acc'][4],te_acc, history.history['loss'][4], history.history['val_loss'][4]
 
 
 def evaluate_repreat(data_train, label_train, data_test, label_test, model, times):
-    scores = []
+    tr_scores = []
+    val_scores = []
+    te_scores = []
+    tr_losses = []
+    val_losses = []
+    histories = []
 
     if model == 'cnn':
         print("CNN:")
         for n in range(times):
             print("Training %.d begin:" % (n + 1))
-            acc = cnn_1d(data_train, label_train, data_test, label_test)
-            scores.append(acc)
-            print("acc: {:.5%}".format(acc))
+            history, tr_acc, val_acc, te_acc, tr_loss, val_loss = cnn_1d(data_train, label_train, data_test, label_test)
+            histories.append(history)
+            tr_scores.append(tr_acc)
+            val_scores.append(val_acc)
+            te_scores.append(te_acc)
+            tr_losses.append(tr_loss)
+            val_losses.append(val_loss)
+            print("Tr_acc: {:.5%}".format(tr_acc))
+            print("Val_acc: {:.5%}".format(val_acc))
+            print("Te_acc: {:.5%}".format(te_acc))
+            print("Tr_loss: {:.5%}".format(tr_loss))
+            print("Val_loss: {:.5%}".format(val_loss))
+            print("/////////////////////////////////////////////////////////////////")
     elif model == 'lstm':
         print("LSTM:")
         for n in range(times):
             print("Training %.d begin:" % (n + 1))
-            acc = lstm(data_train, label_train, data_test, label_test)
-            scores.append(acc)
-            print("acc: {:.5%}".format(acc))
+            history, tr_acc, val_acc, te_acc, tr_loss, val_loss = lstm(data_train, label_train, data_test, label_test)
+            histories.append(history)
+            tr_scores.append(tr_acc)
+            val_scores.append(val_acc)
+            te_scores.append(te_acc)
+            tr_losses.append(tr_loss)
+            val_losses.append(val_loss)
+            print("Tr_acc: {:.5%}".format(tr_acc))
+            print("Val_acc: {:.5%}".format(val_acc))
+            print("Te_acc: {:.5%}".format(te_acc))
+            print("Tr_loss: {:.5%}".format(tr_loss))
+            print("Val_loss: {:.5%}".format(val_loss))
+            print("/////////////////////////////////////////////////////////////////")
     elif model == 'cnn_lstm':
         print("CNN-LSTM")
         for n in range(times):
             print("Training %.d begin:" % (n + 1))
-            acc = cnn_lstm(data_train, label_train, data_test, label_test, 4)
-            scores.append(acc)
-            print("acc: {:.5%}".format(acc))
+            history, tr_acc, val_acc, te_acc, tr_loss, val_loss = cnn_lstm(data_train, label_train, data_test, label_test, 4)
+            histories.append(history)
+            tr_scores.append(tr_acc)
+            val_scores.append(val_acc)
+            te_scores.append(te_acc)
+            tr_losses.append(tr_loss)
+            val_losses.append(val_loss)
+            print("Tr_acc: {:.5%}".format(tr_acc))
+            print("Val_acc: {:.5%}".format(val_acc))
+            print("Te_acc: {:.5%}".format(te_acc))
+            print("Tr_loss: {:.5%}".format(tr_loss))
+            print("Val_loss: {:.5%}".format(val_loss))
+            print("/////////////////////////////////////////////////////////////////")
     elif model == 'conv_lstm':
         print("ConvLSTM:")
         for n in range(times):
             print("Training %.d begin:" % (n + 1))
-            acc = conv_lstm(data_train, label_train, data_test, label_test, 4)
-            scores.append(acc)
-            print("acc: {:.5%}".format(acc))
+            history, tr_acc, val_acc, te_acc, tr_loss, val_loss = conv_lstm(data_train, label_train, data_test, label_test, 4)
+            histories.append(history)
+            tr_scores.append(tr_acc)
+            val_scores.append(val_acc)
+            te_scores.append(te_acc)
+            tr_losses.append(tr_loss)
+            val_losses.append(val_loss)
+            print("Tr_acc: {:.5%}".format(tr_acc))
+            print("Val_acc: {:.5%}".format(val_acc))
+            print("Te_acc: {:.5%}".format(te_acc))
+            print("Tr_loss: {:.5%}".format(tr_loss))
+            print("Val_loss: {:.5%}".format(val_loss))
+            print("/////////////////////////////////////////////////////////////////")
 
-    print("Mean score: {:.5}; Std:: +/- {:.5}".format(np.mean(scores), np.std(scores)))
+    print("Mean tr_score: {:.5}; Std:: +/- {:.5}".format(np.mean(tr_scores), np.std(tr_scores)))
+    print("Mean val_score: {:.5}; Std:: +/- {:.5}".format(np.mean(val_scores), np.std(val_scores)))
+    print("Mean te_score: {:.5}; Std:: +/- {:.5}".format(np.mean(te_scores), np.std(te_scores)))
+    print("Mean tr_loss: {:.5}; Std:: +/- {:.5}".format(np.mean(tr_losses), np.std(tr_losses)))
+    print("Mean val_loss: {:.5}; Std:: +/- {:.5}".format(np.mean(val_losses), np.std(val_losses)))
+    return histories
 

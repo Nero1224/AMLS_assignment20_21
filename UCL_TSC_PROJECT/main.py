@@ -32,7 +32,29 @@ print('plot finished')
 
 
 
-#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 5)
-#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 5)
-#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 5)
-#pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 5)
+#histories_cnn = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 5)
+histories_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 5)
+#histories_cnn_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 5)
+#histories_convlstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 5)
+"""
+fig, ax = plt.subplots(figsize=(15, 50), ncols=1, nrows=4)
+histories = [histories_cnn[4], histories_lstm[4], histories_cnn_lstm[4], histories_convlstm[4]]
+histories_name = ['cnn', 'lstm', 'cnn-lstm', 'convlstm']
+#histories = []
+#histories.append(histories_cnn[0])
+#histories.append('4')
+
+for n in range(4):
+    print('plot begin')
+    time_steps = range(1, len(histories[n].history['acc'])+1)
+    ax[n].plot(time_steps, histories[n].history['acc'], 'ro', label=str(histories_name[n])+'acc')
+    ax[n].plot(time_steps, histories[n].history['val_acc'], 'b', label=str(histories_name[n])+'val_acc')
+    ax[n].set_title(str(histories_name[n]), fontsize=22)
+    ax[n].set_xlabel(r'Epochs', fontsize=22)
+    ax[n].set_ylabel(r'Accuracy', fontsize=22)
+    ax[n].tick_params(labelsize=22)
+    ax[n].legend(fontsize=24)
+    print('plot finished')
+
+plt.show()
+"""
