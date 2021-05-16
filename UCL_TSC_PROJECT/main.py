@@ -32,10 +32,14 @@ print('plot finished')
 
 
 
-#histories_cnn = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 5)
-histories_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 5)
+histories_cnn = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 10)
+#histories_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 5)
 #histories_cnn_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 5)
 #histories_convlstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 5)
+
+data_train_std, data_test_std = pl.standardization(data_train, data_test)
+histories_cnn = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 10)
+
 """
 fig, ax = plt.subplots(figsize=(15, 50), ncols=1, nrows=4)
 histories = [histories_cnn[4], histories_lstm[4], histories_cnn_lstm[4], histories_convlstm[4]]

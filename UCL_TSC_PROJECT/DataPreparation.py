@@ -16,7 +16,7 @@ print(values)
 # normalization
 
 def normalizer(data):
-    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler = MinMaxScaler(feature_range=(-1, 1))
     scaler = scaler.fit(data)
     print("Minimum: %f; Maximum: %f" % (scaler.data_min_, scaler.data_max_))
 

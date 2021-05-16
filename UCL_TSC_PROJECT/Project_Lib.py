@@ -50,6 +50,22 @@ def overlapping_remove(data):
     data = data[:, 0:middle, :]
     return data
 
+def normalization(data_train, data_test):
+    print("Standzrdization begin:")
+    data_train_nolap = overlapping_remove(data_train)
+    print(data_train_nolap.shape)
+    data_train_nolap = data_train_nolap.reshape(data_train_nolap.shape[0]*data_train_nolap.shape[1], data_train_nolap.shape[2])
+    data_train_reshape = data_train.reshape(data_train.shape[0]*data_train.shape[1], data_train.shape[2])
+    data_test_reshape = data_test.reshape(data_test.shape[0]*data_test.shape[1], data_test.shape[2])
+
+    std = StandardScaler()
+    std.fit(data_train_nolap)
+
+    data_train_std = std.transform(data_train_reshape).reshape(data_train.shape)
+    data_test_std = std.transform(data_test_reshape).reshape(data_test.shape)
+
+    print("Standardization end.")
+    return data_train_std, data_test_std
 
 def standardization(data_train, data_test):
     print("Standzrdization begin:")
@@ -100,7 +116,7 @@ def lstm(data_train, label_train, data_test, label_test):
     #print("Model building begin:")
     lstm = models.Sequential()
     lstm.add(layers.LSTM(128, input_shape=(data_train.shape[1], data_train.shape[2])))
-    #lstm.add(layers.Dropout(0.5))
+    lstm.add(layers.Dropout(0.5))
     lstm.add(layers.Dense(64, activation='relu'))
     lstm.add(layers.Dense(6, activation='softmax'))
     #lstm.summary()
@@ -124,7 +140,7 @@ def cnn_lstm(data_train, label_train, data_test, label_test, block_num):
     label_test = np_utils.to_categorical(label_test - 1)
     #print("Model building begin:")
     cnn_lstm = models.Sequential()
-    cnn_lstm.add(layers.TimeDistributed(layers.Conv1D(filters=64, kernel_size=3,
+    cnn_lstm.add(layers.TimeDistributed(layers.Conv1D(filters=128, kernel_size=3,
                                                       activation='relu',
                                                       input_shape=(None, data_train.shape[2], data_train.shape[3]))))
     cnn_lstm.add(layers.TimeDistributed(layers.Conv1D(filters=64, kernel_size=3, activation='relu')))
