@@ -1,6 +1,6 @@
 from sklearn.preprocessing import StandardScaler
 from keras import models, layers, optimizers
-from keras.utils import np_utils
+from keras.utils import np_utils, plot_model
 import pandas
 import os
 import numpy as np
@@ -90,15 +90,16 @@ def cnn_1d(data_train, label_train, data_test, label_test):
     label_test = np_utils.to_categorical(label_test - 1)
     #print("Model building begin:")
     cnn_1d = models.Sequential()
-    cnn_1d.add(layers.Conv1D(filters=128, kernel_size=3, activation='relu',
+    cnn_1d.add(layers.Conv1D(filters=64, kernel_size=3, activation='relu',
                              input_shape=(data_train.shape[1], data_train.shape[2])))
     cnn_1d.add(layers.Conv1D(filters=64, kernel_size=3, activation='relu'))
     cnn_1d.add(layers.Dropout(0.5))
     cnn_1d.add(layers.MaxPooling1D(pool_size=2))
     cnn_1d.add(layers.Flatten())
-    cnn_1d.add(layers.Dense(64, activation='relu'))
+    cnn_1d.add(layers.Dense(100, activation='relu'))
     cnn_1d.add(layers.Dense(6, activation='softmax'))
     #cnn_1d.summary()
+    plot_model(cnn_1d, show_shapes=True, to_file='cnn_1d.png', dpi=200)
     cnn_1d.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
@@ -120,6 +121,7 @@ def lstm(data_train, label_train, data_test, label_test):
     lstm.add(layers.Dense(64, activation='relu'))
     lstm.add(layers.Dense(6, activation='softmax'))
     #lstm.summary()
+    plot_model(lstm, show_shapes=True, to_file='lstm.png', dpi=200)
     lstm.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
@@ -152,6 +154,7 @@ def cnn_lstm(data_train, label_train, data_test, label_test, block_num):
     cnn_lstm.add(layers.Dense(64, activation='relu'))
     cnn_lstm.add(layers.Dense(6, activation='softmax'))
     #cnn_1d.summary()
+    plot_model(cnn_lstm, show_shapes=True, to_file='cnn_lstm.png', dpi=200)
     cnn_lstm.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
@@ -180,6 +183,7 @@ def conv_lstm(data_train, label_train, data_test, label_test, block_num):
     conv_lstm.add(layers.Dense(64, activation='relu'))
     conv_lstm.add(layers.Dense(6, activation='softmax'))
     #cnn_1d.summary()
+    plot_model(conv_lstm, show_shapes=True, to_file='conv.png', dpi=200)
     conv_lstm.compile(loss='categorical_crossentropy',
                    optimizer='adam',
                    metrics=['acc'])
