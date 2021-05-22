@@ -8,9 +8,9 @@ from sklearn.model_selection import train_test_split
 gpu = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpu[0], True)
 
+# Load and analyze train and test dataset
 dir_path_train = r"C:/Users/ASUS/Desktop/AMLS_Assignment/AMLS_PROJECT/UCI_HAR_Dataset/train"
 dir_path_test = r"C:/Users/ASUS/Desktop/AMLS_Assignment/AMLS_PROJECT/UCI_HAR_Dataset/test"
-
 data_train, label_train = pl.build_dataset(dir_path_train, 'Inertial Signals', 'train')
 data_test, label_test = pl.build_dataset(dir_path_test, 'Inertial Signals', 'test')
 pl.distribution_ana(label_train)
@@ -67,24 +67,31 @@ print(data_test.shape)
 print(label_test.shape)
 """
 
-
-
+# Train and test all models without standardization
+"""
 histories_cnn = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 5)
-#histories_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 5)
-#histories_cnn_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 5)
-#histories_convlstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 5)
+histories_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'lstm', 5)
+histories_cnn_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 5)
+histories_convlstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 5)
+"""
 
+# Train and test all models with standardization
 #data_train_std, data_test_std = pl.standardization(data_train, data_test)
-#histories_cnn = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn', 10)
+data_train_std = data_train
+data_test_std = data_test
+histories_cnn = pl.evaluate_repreat(data_train_std, label_train, data_test_std, label_test, 'cnn', 5)
+histories_lstm = pl.evaluate_repreat(data_train_std, label_train, data_test_std, label_test, 'lstm', 5)
+histories_cnn_lstm = pl.evaluate_repreat(data_train_std, label_train, data_test_std, label_test, 'cnn_lstm', 5)
+histories_convlstm = pl.evaluate_repreat(data_train_std, label_train, data_test_std, label_test, 'conv_lstm', 5)
 
-
+# Plot learning curve
 fig, ax = plt.subplots(figsize=(15, 50), ncols=1, nrows=4)
-#histories = [histories_cnn[4], histories_lstm[4], histories_cnn_lstm[4], histories_convlstm[4]]
-#histories_name = ['cnn', 'lstm', 'cnn-lstm', 'convlstm']
-histories = [histories_cnn[4]]
-histories_name = ['cnn']
+histories = [histories_cnn[4], histories_lstm[4], histories_cnn_lstm[4], histories_convlstm[4]]
+histories_name = ['cnn', 'lstm', 'cnn-lstm', 'convlstm']
+#histories = [histories_cnn[4]]
+#histories_name = ['cnn']
 
-for n in range(1):
+for n in range(4):
     print('plot begin')
     time_steps = range(1, len(histories[n].history['acc'])+1)
     ax[n].plot(time_steps, histories[n].history['acc'], 'ro', label=str(histories_name[n])+'acc')
