@@ -74,7 +74,7 @@ histories_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_t
 histories_cnn_lstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'cnn_lstm', 5)
 histories_convlstm = pl.evaluate_repreat(data_train, label_train, data_test, label_test, 'conv_lstm', 5)
 """
-
+"""
 # Train and test all models with standardization
 #data_train_std, data_test_std = pl.standardization(data_train, data_test)
 data_train_std = data_train
@@ -102,4 +102,16 @@ for n in range(4):
     ax[n].tick_params(labelsize=22)
     ax[n].legend(fontsize=24)
     print('plot finished')
+plt.show()
+"""
+fig, ax = plt.subplots(figsize=(15, 15), ncols=1, nrows=1)
+print('plot begin')
+sample_num = range(1, len(label_train[0:175])+1)
+ax.plot(sample_num, label_train[0:175], 'ro', label=r'labels')
+ax.set_title(r'training labels', fontsize=22)
+ax.set_xlabel(r'sample number', fontsize=22)
+ax.set_ylabel(r'label', fontsize=22)
+ax.tick_params(labelsize=22)
+ax.legend(fontsize=24)
+print('plot finished')
 plt.show()
