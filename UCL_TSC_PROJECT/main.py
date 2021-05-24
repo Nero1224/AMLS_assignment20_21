@@ -36,7 +36,7 @@ print('plot finished')
 """
 
 # manually shuffle prepared train set and test set
-
+"""
 index_train = [i for i in range(len(data_train))]
 index_test = [i for i in range(len(data_test))]
 np.random.shuffle(index_train)
@@ -45,7 +45,7 @@ data_train = data_train[index_train, :, :]
 data_test = data_test[index_test, :, :]
 label_train = label_train[index_train]
 label_test = label_test[index_test]
-
+"""
 
 # manually create and shuffle train set and test set; note: the result is very bad! Why?
 """
@@ -76,7 +76,7 @@ histories_convlstm = pl.evaluate_repreat(data_train, label_train, data_test, lab
 """
 """
 # Train and test all models with standardization
-#data_train_std, data_test_std = pl.standardization(data_train, data_test)
+data_train_std, data_test_std = pl.standardization(data_train, data_test)
 data_train_std = data_train
 data_test_std = data_test
 histories_cnn = pl.evaluate_repreat(data_train_std, label_train, data_test_std, label_test, 'cnn', 5)
@@ -104,7 +104,7 @@ for n in range(4):
     print('plot finished')
 plt.show()
 """
-fig, ax = plt.subplots(figsize=(15, 15), ncols=1, nrows=1)
+fig, ax = plt.subplots(figsize=(10, 6), ncols=1, nrows=1)
 print('plot begin')
 sample_num = range(1, len(label_train[0:175])+1)
 ax.plot(sample_num, label_train[0:175], 'ro', label=r'labels')
